@@ -4,7 +4,6 @@ const e = React.createElement;
 
 const SSS_GRUPLARI = [
   ['Randevu ve görüşme', [
-    ['Ön görüşme ücretli mi?', 'İlk 15 dakikalık ön görüşme ücretsizdir. Dosyanızı dinleyip izlenecek yolu birlikte netleştiririz; ücret, kapsam belirlendikten sonra görüşmede konuşulur.'],
     ['Randevu nasıl alınır?', 'Web sitesindeki takvimden uygun saati seçebilir, WhatsApp üzerinden yazabilir ya da doğrudan arayabilirsiniz: ' + window.BURO.tel + '.'],
     ['Görüntülü veya sesli görüşme yapılıyor mu?', 'Evet. Ofiste, görüntülü ya da sesli görüşme seçeneklerinden birini tercih edebilirsiniz; randevu adımlarında saat ve süre birlikte belirlenir.'],
   ]],

@@ -396,7 +396,7 @@ function BuroScreen({
       gap: 'var(--space-6)',
       marginTop: 'var(--space-10)'
     }
-  }, [['target', 'Misyonumuz', 'Müvekkillerimizin hukuki sorunlarını, mevzuata ve meslek kurallarına bağlı kalarak, anlaşılır bir dille ve öngörülebilir bir süreç yönetimiyle çözmek. Her dosyada, kişinin hakkını en az zaman ve giderle koruyacak yolu esas alıyoruz.'], ['eye', 'Vizyonumuz', 'Hukuki hizmetin şeffaf biçimde yürütüldüğü; müvekkilin dosyasının hangi aşamada olduğunu her an bilebildiği bir çalışma düzenini yerleştirmek. Teknolojiyi, avukat ile müvekkil arasındaki iletişimi güçlendirmek için kullanıyoruz.'], ['scale', 'Amacımız', 'Adalete erişimi kolaylaştırmak. Ön görüşmenin ücretsiz olması, süreç ve gider bilgisinin baştan paylaşılması, dosya durumunun portalden izlenebilmesi bu amacın uygulamadaki karşılığıdır.']].map(([ic, b, m]) => /*#__PURE__*/React.createElement("div", {
+  }, [['target', 'Misyonumuz', 'Müvekkillerimizin hukuki sorunlarını, mevzuata ve meslek kurallarına bağlı kalarak, anlaşılır bir dille ve öngörülebilir bir süreç yönetimiyle çözmek. Her dosyada, kişinin hakkını en az zaman ve giderle koruyacak yolu esas alıyoruz.'], ['eye', 'Vizyonumuz', 'Hukuki hizmetin şeffaf biçimde yürütüldüğü; müvekkilin dosyasının hangi aşamada olduğunu her an bilebildiği bir çalışma düzenini yerleştirmek. Teknolojiyi, avukat ile müvekkil arasındaki iletişimi güçlendirmek için kullanıyoruz.'], ['scale', 'Amacımız', 'Adalete erişimi kolaylaştırmak. Sürecin baştan öngörülebilir biçimde paylaşılması ve dosya durumunun portalden izlenebilmesi bu amacın uygulamadaki karşılığıdır.']].map(([ic, b, m]) => /*#__PURE__*/React.createElement("div", {
     key: b
   }, /*#__PURE__*/React.createElement("span", {
     style: {

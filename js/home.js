@@ -538,7 +538,7 @@ function HomeScreen({
       marginTop: 'var(--space-3)',
       maxWidth: '56ch'
     }
-  }, "On be\u015F dakikal\u0131k \xFCcretsiz \xF6n g\xF6r\xFC\u015Fmede dosyan\u0131z\u0131n yol haritas\u0131 de\u011Ferlendirilir. Talebinizin hukuken elveri\u015Fli olmad\u0131\u011F\u0131 kanaatine var\u0131lmas\u0131 h\xE2linde bu husus taraf\u0131n\u0131za a\xE7\u0131k\xE7a bildirilir.")), /*#__PURE__*/React.createElement(Button, {
+  }, "\xD6n g\xF6r\xFC\u015Fmede dosyan\u0131z\u0131n yol haritas\u0131 de\u011Ferlendirilir. Talebinizin hukuken elveri\u015Fli olmad\u0131\u011F\u0131 kanaatine var\u0131lmas\u0131 h\xE2linde bu husus taraf\u0131n\u0131za a\xE7\u0131k\xE7a bildirilir.")), /*#__PURE__*/React.createElement(Button, {
     variant: "accent",
     size: "lg",
     icon: "calendar-plus",

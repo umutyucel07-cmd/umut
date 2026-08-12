@@ -535,7 +535,7 @@ function BookingScreen({
       color: 'var(--text-muted)',
       lineHeight: 'var(--leading-relaxed)'
     }
-  }, "\u0130lk on be\u015F dakikal\u0131k \xF6n g\xF6r\xFC\u015Fme \xFCcretsizdir. Randevunuzu, g\xF6r\xFC\u015Fme saatinden yirmi d\xF6rt saat \xF6ncesine kadar bedelsiz olarak erteleyebilirsiniz."), /*#__PURE__*/React.createElement("div", {
+  }, "Randevunuzu, g\xF6r\xFC\u015Fme saatinden yirmi d\xF6rt saat \xF6ncesine kadar erteleyebilirsiniz."), /*#__PURE__*/React.createElement("div", {
     style: {
       marginTop: 'var(--space-4)',
       paddingTop: 'var(--space-4)',

@@ -116,7 +116,7 @@ function UygulamaScreen({
       marginTop: 'var(--space-10)',
       flexWrap: 'wrap'
     }
-  }, [['Ücretsizdir', 'Kurulum ve kullanım bedelsizdir'], ['Yer kaplamaz', 'Cihazınızda birkaç megabayt yer tutar'], ['Çevrimdışı çalışır', 'İnternet bağlantısı olmadığında da açılır']].map(([b, a]) => /*#__PURE__*/React.createElement("div", {
+  }, [['Uygulama mağazası gerekmez', 'Tarayıcıdan doğrudan kurulur'], ['Yer kaplamaz', 'Cihazınızda birkaç megabayt yer tutar'], ['Çevrimdışı çalışır', 'İnternet bağlantısı olmadığında da açılır']].map(([b, a]) => /*#__PURE__*/React.createElement("div", {
     key: b
   }, /*#__PURE__*/React.createElement("div", {
     style: {

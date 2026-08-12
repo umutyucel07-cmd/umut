@@ -1,3 +1,19 @@
+> # ⛔ BU BELGE ESKİMİŞTİR — UYGULAMAYIN
+>
+> **13.08.2026.** Bu dosya, sitenin **eski yayın modelini** anlatıyor: tek dosyalık
+> `index.html`'i Cloudflare paneline **elle sürükleyip bırakmak**.
+>
+> **Site artık öyle yayınlanmıyor.** Doğru model:
+> `umutyucel07-cmd/umut` deposu → **git push** → Cloudflare Pages otomatik dağıtır.
+>
+> **Bu belgeyi uygularsanız ne olur:** `yayin/dagitim/index.html` **1,5 MB'lik**,
+> her şeyi içine gömen eski pakettir. Canlı sitenin üzerine yüklenirse çok dosyalı
+> ve optimize sürüm (JS 106 KB, ayrı `assets/`, `vendor/`, `Person` JSON-LD) **yok olur.**
+> Ayrıca tarif ettiği `dagitim/` klasörü **bu depoda yok** — belge burada anlamsız.
+>
+> **Doğru yayın talimatı:** `COPILOT-YAYIN.md`
+> **Değişmez kurallar:** `CLAUDE.md` · `~/.agents/skills/umut-yucel-sistem/SKILL.md`
+
 # 3 adımda yayına al
 
 ## 1 — Yükle

@@ -1,0 +1,11 @@
+.env
+.env.*
+!.env.example
+node_modules/
+.DS_Store
+
+# Müvekkil portal — kişisel veri, ASLA commit edilmez
+portal-kv-*.json
+_Veri/
+MUVEKKIL-KOD-*.pdf
+MUVEKKIL-KOD-*.html

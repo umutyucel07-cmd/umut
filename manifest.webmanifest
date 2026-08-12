@@ -1,7 +1,7 @@
 {
   "name": "Av. Umut Yücel — Umut Yücel Hukuk Bürosu",
-  "short_name": "Umut Yücel",
-  "description": "Randevu alın, dosyanızı takip edin, sorunuzu iletin.",
+  "short_name": "Av. Umut Yücel",
+  "description": "Antalya Barosu'na kayıtlı avukat. Müvekkil Bilgi Sistemi ve büro künye bilgileri.",
   "lang": "tr",
   "dir": "ltr",
   "start_url": "/?kaynak=uygulama",

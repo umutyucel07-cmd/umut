@@ -22,7 +22,7 @@ window.BURO = {
   siteUrl: 'https://avumutyucelhukuk.com',
   instagram: 'https://www.instagram.com/av.umuttyucel?utm_source=qr',
   instagramAd: '@av.umuttyucel',
-  whatsapp: 'https://wa.me/message/E2VZA5SYQZIOI1',
+  whatsapp: 'https://wa.me/905317356382',
   whatsappNo: '905317356382',
   // Hazır metinli WhatsApp bağlantısı üretir (randevu/soru talepleri buradan gelir).
   wa(metin) {
@@ -85,36 +85,6 @@ window.MUVEKKILLER = [{
 }];
 
 // ---- Ölçüm ----
-// Cloudflare Web Analytics kullanılır: ÇEREZSIZ, IP kaydetmez, parmak izi çıkarmaz.
-// Cloudflare panelinden (Analitik → Web Analytics) açılır ve beacon'ı Cloudflare kendisi ekler;
-// bu dosyada bir şey yapılmasına gerek yoktur. Elle eklemek isterseniz cfToken'a panelden
-// aldığınız token'ı yazın — çerez kullanmadığı için rıza kapısına bağlı değildir.
-window.UYAnaliz = {
-  cfToken: null,
-  _yuklendi: false,
-  yukle() {
-    if (this._yuklendi || !this.cfToken) return;
-    const s = document.createElement('script');
-    s.defer = true;
-    s.src = 'https://static.cloudflareinsights.com/beacon.min.js';
-    s.setAttribute('data-cf-beacon', JSON.stringify({
-      token: this.cfToken
-    }));
-    document.head.appendChild(s);
-    this._yuklendi = true;
-  },
-  // Eski ölçüm çerezleri kaldıysa temizler.
-  temizle() {
-    document.cookie.split(';').forEach(c => {
-      const ad = c.split('=')[0].trim();
-      if (/^(_ga|_gid|_gat|plausible|_pk)/.test(ad)) document.cookie = ad + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
-    });
-  },
-  uygula() {
-    this.temizle();
-    this.yukle();
-  }
-};
-window.addEventListener('uy-cerez-karar', () => window.UYAnaliz.uygula());
-window.UYAnaliz.uygula();
+// Cloudflare tarafında çalışan izleme, kaynak dosyada doğrudan eklenmez.
+// Bu dosya dış bağımlılık içermemelidir.
 })();
