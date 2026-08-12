@@ -15,19 +15,12 @@ function LoginScreen({
   const [bekle, setBekle] = React.useState(false);
   const dogrula = e => {
     if (e) e.preventDefault();
-    const t = kod.trim().toLocaleUpperCase('tr-TR');
-    if (!t) {
-      setHata('Lütfen tarafımızca size bildirilen erişim kodunu giriniz.');
-      return;
-    }
     setBekle(true);
     setHata(null);
     setTimeout(() => {
-      const m = (window.MUVEKKILLER || []).find(x => x.kod.toLocaleUpperCase('tr-TR') === t);
+      const s = window.UYOturum.dogrula(kod);
       setBekle(false);
-      if (m) {
-        girisYap(m);
-      } else setHata('Girilen kod kayıtlarımızla eşleşmemektedir. Kodunuzu tarafımızdan yeniden talep edebilirsiniz.');
+      if (s.ok) girisYap(s.muvekkil); else setHata(s.hata);
     }, 450);
   };
   const kanallar = [{

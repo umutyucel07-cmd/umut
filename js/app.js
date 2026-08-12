@@ -2,7 +2,7 @@
 function WebSiteApp() {
   const [route, setRoute] = React.useState('home');
   const [legalDoc, setLegalDoc] = React.useState('kvkk');
-  const [muvekkil, setMuvekkil] = React.useState(null);
+  const [muvekkil, setMuvekkil] = React.useState(() => window.UYOturum ? window.UYOturum.aktif() : null);
   const go = (r, arg) => {
     if (r === 'legal' && arg) setLegalDoc(arg);
     setRoute(r);
@@ -43,6 +43,7 @@ function WebSiteApp() {
     go: go,
     muvekkil: muvekkil,
     cikis: () => {
+      window.UYOturum && window.UYOturum.cikis();
       setMuvekkil(null);
       go('login');
     }
