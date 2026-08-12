@@ -29,7 +29,7 @@ YASAK=(
 #   tools/            → guard'ın kendisi (YASAK dizisi bu dizgeleri içerir!)
 #   *.yedek-* / *.oncesi-*  → yedek kopyalar
 #   .github/ node_modules/ .git/ vendor/
-MUAF='^\./(js/buro-bilgi\.js|tools/|\.github/|node_modules/|\.git/|vendor/)|\.md$|\.yedek-|\.oncesi-|\.eski-'
+MUAF='^\./(js/buro-bilgi\.js|tools/|\.github/|node_modules/|\.git/|vendor/)|\.md$|\.yedek-|\.oncesi-|\.eski-|\.KARANTINA$|\.gomulu-'
 
 bulunan=()
 for v in "${YASAK[@]}"; do
