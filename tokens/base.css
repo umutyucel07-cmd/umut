@@ -1,0 +1,11 @@
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--surface-page);color:var(--text-body);font-family:var(--font-sans);font-size:var(--text-body);line-height:var(--leading-normal);-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:var(--font-display);color:var(--text-heading);letter-spacing:var(--tracking-title);line-height:var(--leading-snug);margin:0}
+h1{font-size:var(--text-title-1);letter-spacing:var(--tracking-display)}h2{font-size:var(--text-title-2)}h3{font-size:var(--text-title-3)}
+p{margin:0}
+a{color:var(--text-link);text-decoration:none;border-bottom:1px solid color-mix(in srgb,var(--text-link) 30%,transparent);transition:color var(--dur-fast) var(--ease-standard),border-color var(--dur-fast) var(--ease-standard)}
+a:hover{color:var(--text-link-hover);border-bottom-color:var(--text-link-hover)}
+:focus-visible{outline:none;box-shadow:var(--shadow-focus);border-radius:var(--radius-xs)}
+.eyebrow{font-size:var(--text-micro);font-weight:var(--weight-semibold);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;color:var(--text-accent)}
+.mono{font-family:var(--font-mono);letter-spacing:var(--tracking-mono);font-size:var(--text-caption)}
+.rule-brass{height:2px;width:44px;background:var(--brass-500);border:0}

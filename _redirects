@@ -1,0 +1,5 @@
+# Cloudflare Pages yönlendirmeleri
+# www → apex (tek adres, çift içerik yok)
+https://www.avumutyucelhukuk.com/*  https://avumutyucelhukuk.com/:splat  301
+# tek sayfalık uygulama: bilinmeyen yol ana sayfaya düşer
+/*  /index.html  200

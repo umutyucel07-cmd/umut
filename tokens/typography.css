@@ -1,0 +1,16 @@
+:root{
+  --text-display-1:clamp(40px,5.2vw,68px);
+  --text-display-2:clamp(32px,3.8vw,48px);
+  --text-title-1:32px; --text-title-2:24px; --text-title-3:20px;
+  --text-body-lg:18px; --text-body:16px; --text-body-sm:14px; --text-caption:13px; --text-micro:11px;
+
+  --leading-tight:1.08; --leading-snug:1.25; --leading-normal:1.5; --leading-relaxed:1.65;
+
+  --weight-light:300; --weight-regular:400; --weight-medium:500; --weight-semibold:600; --weight-bold:700;
+
+  --tracking-display:-.02em; --tracking-title:-.01em; --tracking-body:0; --tracking-eyebrow:.14em; --tracking-mono:.02em;
+
+  /* kompozit alias */
+  --type-eyebrow-size:var(--text-micro);
+  --type-eyebrow-weight:var(--weight-semibold);
+}

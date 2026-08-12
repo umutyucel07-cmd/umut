@@ -1,0 +1,8 @@
+@import url("https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+/* Webfonts are loaded from Google Fonts (no licensed brand binaries were provided).
+   Source Serif 4 - display / editorial voice. Figtree - UI + body. JetBrains Mono - dosya no, tarih, referans. */
+:root{
+  --font-display:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --font-sans:"Figtree","Helvetica Neue",Arial,sans-serif;
+  --font-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
