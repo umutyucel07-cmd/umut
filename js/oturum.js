@@ -63,9 +63,15 @@
       if (!m) return Promise.resolve({ durum: 'yok', mesaj: 'Bilgileriniz kayıtlarımızla eşleşmedi. Yazım denetimi yapıp yeniden deneyebilir ya da tarafımıza ulaşabilirsiniz.' });
       var uc = window.UY_KOD_ENDPOINT || '/api/kod-talebi';
       var istek = fetch(uc, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ad: adN, tel: rakam, kanal: kanal, kaynak: location.hostname }) }).then(function (r) {
-        if (!r.ok) throw new Error('uc-hata');
-        kayit.durum = 'gonderildi';
-        return { durum: 'gonderildi', mesaj: 'Kodunuz ' + hedef + ' gönderilmiştir; birkaç dakika içinde ulaşır.' };
+        // _redirects icindeki SPA yedegi (/* -> /index.html 200) uc YOKKEN de 200 dondurur.
+        // Yalniz r.ok'a bakmak muvekkile YALAN 'gonderildi' mesaji verir. Icerik turu ve govde de dogrulanir.
+        var tur = r.headers.get('content-type') || '';
+        if (!r.ok || tur.indexOf('application/json') === -1) throw new Error('uc-yok');
+        return r.json();
+      }).then(function (c) {
+        if (!c || typeof c.durum !== 'string') throw new Error('uc-bicim');
+        kayit.durum = c.durum;
+        return { durum: c.durum, mesaj: c.mesaj || 'Talebiniz alinmistir.' };
       });
       var zamanAsimi = new Promise(function (res) { setTimeout(function () { res(null); }, 6000); });
       return Promise.race([istek, zamanAsimi]).catch(function () { return null; }).then(function (r) {

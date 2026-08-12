@@ -79,6 +79,39 @@ if [ -f js/varliklar.js ]; then
   else printf "  ❌ %-22s %s bayt (beklenen <2000) — eski gömülü sürüm geri gelmiş\n" "varliklar.js" "$VB"; hata=1; fi
 fi
 
+
+# ── 13.08.2026'da eklenen üç denetim ────────────────────────────────────────
+# Üçü de o gün canlıda ya da depoda gerçekten yaşanmış olaylardan doğdu.
+
+# PAKETLEYICI DIŞA AKTARIMI: tasarım aracının "dışa aktar" çıktısı yayınlanabilir
+# site DEĞİLDİR. 1.55 MB'lik dagitim/index.html ve 1.58 MB'lik dışa aktarım
+# dosyası üç kez yayın kaynağı sanıldı. İkisi de her şeyi tek dosyaya gömer,
+# script src değerleri UUID'dir, noscript/JSON-LD taşımaz.
+PAKET=$(grep -rl --include='*.html' -E '__bundler_loading|__bundler_thumbnail' . 2>/dev/null | grep -v node_modules | wc -l | tr -d ' ')
+kontrol "paketleyici çıktısı" "$PAKET" 0 \
+        "Bu dosyalar yayın kaynağı değildir; index.html + js/ + vendor/ yayınlanır"
+
+BUYUK=$(find . -name '*.html' -size +200k -not -path './node_modules/*' -not -path './.git/*' 2>/dev/null | wc -l | tr -d ' ')
+kontrol "200 KB üstü HTML"  "$BUYUK" 0 \
+        "Şişkin HTML = her şeyin gömüldüğü paketleyici tuzağı"
+
+# UÇ DÜRÜSTLÜĞÜ: _redirects içindeki SPA yedeği (/* -> /index.html 200) uç yokken
+# de 200 döndürür. js/oturum.js yalnız r.ok'a bakarsa müvekkile "kodunuz
+# gönderildi" YALANINI söyler. İçerik türü doğrulaması zorunludur.
+if [ -f js/oturum.js ]; then
+  DURUST=$(grep -c "content-type" js/oturum.js | tr -d ' ')
+  enaz  "uç yanıtı doğrulama" "$DURUST" 1 \
+        "SPA yedeği 200 döner; content-type bakılmazsa müvekkile yalan başarı mesajı gider"
+fi
+
+# KARANTİNA UÇLARI: ikinci WhatsApp webhook'u + serbest metin + sabit doğrulama
+# jetonu. Gerekçe: 05_Bellek_Arsivi/KARANTINA-UCLAR/NEDEN-KARANTINADA.md
+KAR=0
+[ -f functions/api/webhook.js ] && KAR=$((KAR+1))
+[ -f functions/api/wa-webhook.js ] && KAR=$((KAR+1))
+kontrol "karantina ucu"     "$KAR" 0 \
+        "Çift webhook + serbest metin gönderimi; NEDEN-KARANTINADA.md okunmadan geri konmaz"
+
 echo "────────────────────────────────────────────────────────────"
 if [ "$hata" -eq 1 ]; then
   cat <<'SON'

@@ -41,19 +41,23 @@ done
 
 # tekilleştir
 if [ ${#bulunan[@]} -gt 0 ]; then
-  mapfile -t tekil < <(printf '%s\n' "${bulunan[@]}" | sort -u)
+  tekil=$(printf '%s\n' "${bulunan[@]}" | sort -u)
 else
-  tekil=()
+  tekil=''
 fi
 
-if [ ${#tekil[@]} -eq 0 ]; then
+if [ -z "$tekil" ]; then
   echo "✅ Künye tek kaynakta (js/buro-bilgi.js)."
   exit 0
 fi
 
+tekil_sayi=$(printf '%s\n' "$tekil" | grep -c '.' || true)
+
 echo "────────────────────────────────────────────────────────────"
-echo "Künye ${#tekil[@]} dosyada sabit yazılmış:"
-printf '   • %s\n' "${tekil[@]}"
+echo "Künye $tekil_sayi dosyada sabit yazılmış:"
+printf '%s\n' "$tekil" | while IFS= read -r satir; do
+  [ -n "$satir" ] && printf '   • %s\n' "$satir"
+done
 echo
 echo "Hedef: künye yalnız js/buro-bilgi.js'te dursun; diğerlerinde {{BURO}}"
 echo "işaretçisi olsun ve tools/kunye-bas.js doldursun."

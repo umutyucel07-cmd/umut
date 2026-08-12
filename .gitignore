@@ -9,3 +9,12 @@ portal-kv-*.json
 _Veri/
 MUVEKKIL-KOD-*.pdf
 MUVEKKIL-KOD-*.html
+functions/api/*.KARANTINA
+*.yedek-*
+*.oncesi-*
+*.eski-*
+*.orijinal-*
+.git/index.lock.bayat
+*-yedek
+*.gomulu-*
+/worker-v6-portal-modulu.js
