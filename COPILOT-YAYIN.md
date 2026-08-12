@@ -261,6 +261,37 @@ Katkı sağlayacak tek bir alan bulunamadı; kesişimin tamamı canlıda zaten v
 ve daha yeni. Tersine birleştirme — canlıyı o dosyayla değiştirmek — bugüne
 kadarki üç gerilemenin de sebebi.
 
+### Kanıt — 13.08.2026'da yeniden yüklenen iki dosya ölçüldü
+
+Karşılaştırma tahmine değil, ölçüme dayanıyor.
+
+**1. `Umut Yucel Hukuk  Internet Sitesi.html` — 1.581.315 bayt.**
+
+| Ölçülen | Değer | Canlı | Sonuç |
+|---|---|---|---|
+| `__bundler_*` işaretleri | **26** | 0 | paketleyici çıktısı |
+| `application/ld+json` | **0** | 1 | dizine girmez |
+| `vendor/` | **0** | 3 | yerel kütüphane yok |
+| `defer` | **0** | 22 | ayrıştırmayı bloklar |
+| `6448` (baro sicil) | **yok** | var | künye eksik |
+| `mevzuat` · `Misyon` · `wa.me` | **hiçbiri yok** | üçü de var | eski sürüm |
+
+`<noscript>` bir kez geçiyor ama içi tarayıcı uyarısıdır, künye değildir.
+**Yayınlanabilir site değildir.**
+
+**2. `COPILOTYAYIN.md` — 9.493 bayt.**
+
+```
+md5  250299789790a90ad59e97f2141b56e4   yüklenen COPILOTYAYIN.md
+md5  250299789790a90ad59e97f2141b56e4   git show 07d6aea:COPILOT-YAYIN.md
+```
+
+**Bayt bayt aynı dosya.** Bu belgenin 1. sürümü, geri dönmüş hâli. Yeni içerik
+taşımıyor; okuduğunuz 2. sürüm onu zaten kapsıyor ve genişletiyor.
+
+**Sonuç: birleştirilecek yeni bilgi yok.** Tek bileşik çözüm, depodaki
+`main` dalıdır.
+
 **`vscode-gorev` ve `vscode-gorev 2` klasörleri tamamen boştur** (tek dosya
 yok). Bir görev paketi bekleniyorsa üretilmemiş demektir.
 
