@@ -1,5 +1,5 @@
 // Umut Yücel Hukuk — çevrimdışı önbellek
-const SURUM = 'uy-v8';
+const SURUM = 'uy-v9';
 const VARLIKLAR = ['/', '/index.html', '/icon-192.png', '/icon-512.png', '/apple-touch-icon.png', '/manifest.webmanifest'];
 
 self.addEventListener('install', (e) => {

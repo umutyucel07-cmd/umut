@@ -412,7 +412,7 @@ function PortalScreen({
       flexDirection: 'column',
       gap: 'var(--space-4)'
     }
-  }, /*#__PURE__*/React.createElement("div", {
+  }, window.HizliTalepler ? /*#__PURE__*/React.createElement(window.HizliTalepler, null) : null, /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'flex',
       flexDirection: 'column',

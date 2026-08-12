@@ -45,6 +45,7 @@ window.BURO = {
 // Yeni müvekkil eklemek için bu listeye bir satır yazıp siteyi yeniden derlemek yeterlidir.
 window.MUVEKKILLER = [{
   kod: 'UY-4182',
+  telSon4: '2341',
   ad: 'Elif Şahin',
   sicil: 'MV-2026-0184',
   dosyalar: [{
@@ -68,6 +69,7 @@ window.MUVEKKILLER = [{
   }]
 }, {
   kod: 'UY-7735',
+  telSon4: '7788',
   ad: 'Murat Kaya',
   sicil: 'MV-2026-0207',
   dosyalar: [{

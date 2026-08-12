@@ -142,7 +142,7 @@ function LoginScreen({
       flexDirection: 'column',
       gap: 'var(--space-3)'
     }
-  }, /*#__PURE__*/React.createElement("span", {
+  }, window.KodTalebiFormu ? /*#__PURE__*/React.createElement(window.KodTalebiFormu, null) : null, /*#__PURE__*/React.createElement("span", {
     className: "eyebrow"
   }, "TARAFIMIZA ULA\u015EMANIN YOLLARI"), kanallar.map(k => /*#__PURE__*/React.createElement(Card, {
     key: k.baslik,
