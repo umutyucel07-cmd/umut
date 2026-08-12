@@ -6,11 +6,13 @@ const {
   Icon,
   Avatar
 } = window.LexaHukukDesignSystem_93e85e;
-const NAV = [['Çalışma Alanları', 'home'], ['Büro', 'buro'], ['Yazılar', 'articles'], ['Uygulama', 'uygulama'], ['İletişim', 'home']];
+const NAV = [['Çalışma Alanları', 'home'], ['Büro', 'buro'], ['Yazılar', 'articles'], ['Mevzuat ve Araçlar', 'mevzuat'], ['Uygulama', 'uygulama']];
 function SiteHeader({
   route,
   go,
-  signedIn
+  signedIn,
+  dil,
+  setDil
 }) {
   const dark = route === 'home';
   return /*#__PURE__*/React.createElement("header", {
@@ -77,8 +79,8 @@ function SiteHeader({
   }, "AVUKAT \xB7 ANTALYA BAROSU"))), /*#__PURE__*/React.createElement("nav", {
     style: {
       display: 'flex',
-      gap: 'var(--space-6)',
-      marginLeft: 'var(--space-6)',
+      gap: 'var(--space-5)',
+      marginLeft: 'var(--space-5)',
       flexShrink: 0,
       whiteSpace: 'nowrap'
     }
@@ -104,89 +106,32 @@ function SiteHeader({
       gap: 'var(--space-3)',
       flexShrink: 0
     }
-  }, /*#__PURE__*/React.createElement("a", {
+  }, window.SiteArama ? /*#__PURE__*/React.createElement(window.SiteArama, {
+    go: go,
+    dark: dark
+  }) : null, window.DilSecici ? /*#__PURE__*/React.createElement(window.DilSecici, {
+    dil: dil,
+    setDil: setDil,
+    dark: dark
+  }) : null, /*#__PURE__*/React.createElement("a", {
     href: window.BURO.telHref,
+    title: window.BURO.tel,
+    "aria-label": 'Telefon: ' + window.BURO.tel,
     style: {
+      width: 34,
+      height: 34,
+      flexShrink: 0,
+      borderRadius: 'var(--radius-control)',
+      borderBottom: 0,
       display: 'inline-flex',
       alignItems: 'center',
-      gap: 6,
-      flexShrink: 0,
-      whiteSpace: 'nowrap',
-      fontSize: 'var(--text-caption)',
-      borderBottom: 0,
-      color: dark ? 'var(--ink-300)' : 'var(--text-muted)'
+      justifyContent: 'center',
+      color: dark ? 'var(--ink-100)' : 'var(--text-muted)'
     }
   }, /*#__PURE__*/React.createElement(Icon, {
     name: "phone",
-    size: 14
-  }), window.BURO.tel), /*#__PURE__*/React.createElement("span", {
-    style: {
-      display: 'flex',
-      gap: 2,
-      flexShrink: 0
-    }
-  }, /*#__PURE__*/React.createElement("a", {
-    href: window.BURO.whatsapp,
-    target: "_blank",
-    rel: "noopener",
-    title: "WhatsApp \xFCzerinden yaz\u0131n\u0131z",
-    "aria-label": "WhatsApp \xFCzerinden yaz\u0131n\u0131z",
-    style: {
-      width: 34,
-      height: 34,
-      borderRadius: 'var(--radius-control)',
-      borderBottom: 0,
-      display: 'inline-flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      color: dark ? 'var(--ink-100)' : 'var(--text-muted)'
-    }
-  }, /*#__PURE__*/React.createElement(Icon, {
-    name: "message-circle",
     size: 17
-  })), /*#__PURE__*/React.createElement("a", {
-    href: window.BURO.instagram,
-    target: "_blank",
-    rel: "noopener",
-    title: 'Instagram · ' + window.BURO.instagramAd,
-    "aria-label": "Instagram",
-    style: {
-      width: 34,
-      height: 34,
-      borderRadius: 'var(--radius-control)',
-      borderBottom: 0,
-      display: 'inline-flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      color: dark ? 'var(--ink-100)' : 'var(--text-muted)'
-    }
-  }, /*#__PURE__*/React.createElement(Icon, {
-    name: "instagram",
-    size: 17
-  })), /*#__PURE__*/React.createElement("a", {
-    href: window.BURO.linkedin,
-    target: "_blank",
-    rel: "noopener",
-    title: "LinkedIn",
-    "aria-label": "LinkedIn",
-    style: {
-      width: 34,
-      height: 34,
-      borderRadius: 'var(--radius-control)',
-      borderBottom: 0,
-      display: 'inline-flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      color: dark ? 'var(--ink-100)' : 'var(--text-muted)'
-    }
-  }, /*#__PURE__*/React.createElement(Icon, {
-    name: "linkedin",
-    size: 17
-  }))), signedIn ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(IconButton, {
-    icon: "bell",
-    label: "Bildirimler",
-    tone: dark ? 'inverse' : 'quiet'
-  }), /*#__PURE__*/React.createElement("button", {
+  })), signedIn ? /*#__PURE__*/React.createElement("button", {
     onClick: () => go('portal'),
     style: {
       background: 'none',
@@ -194,17 +139,18 @@ function SiteHeader({
       cursor: 'pointer',
       display: 'flex',
       alignItems: 'center',
-      gap: 8
+      gap: 8,
+      flexShrink: 0
     }
   }, /*#__PURE__*/React.createElement(Avatar, {
-    name: "Elif \u015Eahin",
+    name: (window.UYOturum && window.UYOturum.aktif() || {}).ad || 'Müvekkil',
     size: "sm"
   }), /*#__PURE__*/React.createElement("span", {
     style: {
       fontSize: 'var(--text-body-sm)',
       color: dark ? 'var(--paper-1)' : 'var(--text-heading)'
     }
-  }, "Elif \u015Eahin"))) : /*#__PURE__*/React.createElement(Button, {
+  }, (window.UYOturum && window.UYOturum.aktif() || {}).ad || 'Müvekkil')) : /*#__PURE__*/React.createElement(Button, {
     variant: dark ? 'inverse' : 'secondary',
     size: "sm",
     icon: "folder-lock",
@@ -219,6 +165,7 @@ function SiteHeader({
 function SiteFooter({
   go
 }) {
+  const colGo = go;
   const col = (title, items) => /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'flex',
@@ -232,9 +179,9 @@ function SiteFooter({
       letterSpacing: 'var(--tracking-eyebrow)',
       color: 'var(--brass-400)'
     }
-  }, title), items.map(i => i === 'Sık sorulanlar' ? /*#__PURE__*/React.createElement("button", {
+  }, title), items.map(i => i === 'Sık sorulanlar' || i === 'Mevzuat ve araçlar' ? /*#__PURE__*/React.createElement("button", {
     key: i,
-    onClick: () => go && go('sss'),
+    onClick: () => go && go(i === 'Sık sorulanlar' ? 'sss' : 'mevzuat'),
     style: {
       background: 'none',
       border: 0,
@@ -315,7 +262,7 @@ function SiteFooter({
       lineHeight: 'var(--leading-relaxed)',
       maxWidth: '34ch'
     }
-  }, "Antalya Barosu'na kay\u0131tl\u0131 avukatl\u0131k b\xFCrosu \xB7 Sicil No 6448. Randevu olu\u015Fturma, dosya takibi ve yaz\u0131\u015Fma tek hesap \xFCzerinden y\xFCr\xFCt\xFClmektedir.")), col('BÜRO', ['Çalışma alanları', 'Ekip', 'Yazılar ve analizler', 'Sık sorulanlar']), col('MÜVEKKİL', ['Portal girişi', 'Randevu al', 'Dosya takibi', 'Belge yükleme']), col('İLETİŞİM', [window.BURO.adresKisa, window.BURO.tarif, window.BURO.tel, window.BURO.mail, 'KEP: ' + window.BURO.kep, window.BURO.site])), /*#__PURE__*/React.createElement("div", {
+  }, "Antalya Barosu'na kay\u0131tl\u0131 avukatl\u0131k b\xFCrosu \xB7 Sicil No 6448. Randevu olu\u015Fturma, dosya takibi ve yaz\u0131\u015Fma tek hesap \xFCzerinden y\xFCr\xFCt\xFClmektedir.")), col('BÜRO', ['Çalışma alanları', 'Ekip', 'Yazılar ve analizler', 'Sık sorulanlar', 'Mevzuat ve araçlar']), col('MÜVEKKİL', ['Portal girişi', 'Randevu al', 'Dosya takibi', 'Belge yükleme']), col('İLETİŞİM', [window.BURO.adresKisa, window.BURO.tarif, window.BURO.tel, window.BURO.mail, 'KEP: ' + window.BURO.kep, window.BURO.site])), /*#__PURE__*/React.createElement("div", {
     style: {
       maxWidth: 'var(--max-content)',
       margin: 'var(--space-10) auto 0',
@@ -344,7 +291,7 @@ function SiteFooter({
     name: ic,
     size: 15,
     color: "var(--brass-400)"
-  }), label))), /*#__PURE__*/React.createElement("div", {
+  }), label))), window.FaydaliLinkler ? /*#__PURE__*/React.createElement(window.FaydaliLinkler, null) : null, /*#__PURE__*/React.createElement("div", {
     style: {
       maxWidth: 'var(--max-content)',
       margin: '0 auto',
@@ -363,6 +310,10 @@ function SiteFooter({
       gap: 'var(--space-3)'
     }
   }, legalLink('KVKK Aydınlatma Metni', 'kvkk'), /*#__PURE__*/React.createElement("span", {
+    style: {
+      opacity: .4
+    }
+  }, "\xB7"), legalLink('Kullanım Koşulları', 'kosullar'), /*#__PURE__*/React.createElement("span", {
     style: {
       opacity: .4
     }

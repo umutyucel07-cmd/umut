@@ -2,9 +2,12 @@
 function WebSiteApp() {
   const [route, setRoute] = React.useState('home');
   const [legalDoc, setLegalDoc] = React.useState('kvkk');
+  const [mevzuatSekme, setMevzuatSekme] = React.useState('araclar');
+  const [dil, setDil] = React.useState('tr');
   const [muvekkil, setMuvekkil] = React.useState(() => window.UYOturum ? window.UYOturum.aktif() : null);
   const go = (r, arg) => {
     if (r === 'legal' && arg) setLegalDoc(arg);
+    if (r === 'mevzuat' && arg) setMevzuatSekme(arg);
     setRoute(r);
     window.scrollTo(0, 0);
   };
@@ -18,8 +21,15 @@ function WebSiteApp() {
   }, /*#__PURE__*/React.createElement(SiteHeader, {
     route: route,
     go: go,
-    signedIn: !!muvekkil
-  }), /*#__PURE__*/React.createElement("div", {
+    signedIn: !!muvekkil,
+    dil: dil,
+    setDil: setDil
+  }), dil !== 'tr' && window.DilBandi ? /*#__PURE__*/React.createElement(window.DilBandi, {
+    dil: dil,
+    go: go
+  }) : null, window.HizliErisim ? /*#__PURE__*/React.createElement(window.HizliErisim, {
+    go: go
+  }) : null, /*#__PURE__*/React.createElement("div", {
     style: {
       flex: 1
     }
@@ -35,6 +45,9 @@ function WebSiteApp() {
     go: go
   }) : route === 'sss' ? /*#__PURE__*/React.createElement(SSSScreen, {
     go: go
+  }) : route === 'mevzuat' ? /*#__PURE__*/React.createElement(MevzuatScreen, {
+    go: go,
+    sekme: mevzuatSekme
   }) : route === 'legal' ? /*#__PURE__*/React.createElement(LegalScreen, {
     go: go,
     doc: legalDoc,

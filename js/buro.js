@@ -367,6 +367,96 @@ function BuroScreen({
     }
   })))), /*#__PURE__*/React.createElement("section", {
     style: {
+      background: 'var(--ink-950)',
+      padding: 'var(--space-16) var(--gutter-page-lg)'
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      maxWidth: 'var(--max-content)',
+      margin: '0 auto'
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "eyebrow",
+    style: {
+      color: 'var(--brass-400)'
+    }
+  }, "M\u0130SYON, V\u0130ZYON VE AMA\xC7"), /*#__PURE__*/React.createElement("h2", {
+    style: {
+      fontFamily: 'var(--font-display)',
+      fontSize: 'var(--text-display-2)',
+      letterSpacing: 'var(--tracking-display)',
+      color: 'var(--paper-1)',
+      marginTop: 'var(--space-3)',
+      maxWidth: '20ch'
+    }
+  }, "Hangi anlay\u0131\u015Fla \xE7al\u0131\u015F\u0131yoruz"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'grid',
+      gridTemplateColumns: 'repeat(3, 1fr)',
+      gap: 'var(--space-6)',
+      marginTop: 'var(--space-10)'
+    }
+  }, [['target', 'Misyonumuz', 'Müvekkillerimizin hukuki sorunlarını, mevzuata ve meslek kurallarına bağlı kalarak, anlaşılır bir dille ve öngörülebilir bir süreç yönetimiyle çözmek. Her dosyada, kişinin hakkını en az zaman ve giderle koruyacak yolu esas alıyoruz.'], ['eye', 'Vizyonumuz', 'Hukuki hizmetin şeffaf biçimde yürütüldüğü; müvekkilin dosyasının hangi aşamada olduğunu her an bilebildiği bir çalışma düzenini yerleştirmek. Teknolojiyi, avukat ile müvekkil arasındaki iletişimi güçlendirmek için kullanıyoruz.'], ['scale', 'Amacımız', 'Adalete erişimi kolaylaştırmak. Ön görüşmenin ücretsiz olması, süreç ve gider bilgisinin baştan paylaşılması, dosya durumunun portalden izlenebilmesi bu amacın uygulamadaki karşılığıdır.']].map(([ic, b, m]) => /*#__PURE__*/React.createElement("div", {
+    key: b
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      width: 42,
+      height: 42,
+      borderRadius: 'var(--radius-sm)',
+      background: 'rgba(255,255,255,.07)',
+      border: '1px solid var(--border-inverse)',
+      display: 'inline-flex',
+      alignItems: 'center',
+      justifyContent: 'center'
+    }
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: ic,
+    size: 20,
+    color: "var(--brass-400)"
+  })), /*#__PURE__*/React.createElement("h3", {
+    style: {
+      fontFamily: 'var(--font-display)',
+      fontSize: 'var(--text-title-3)',
+      color: 'var(--paper-1)',
+      marginTop: 'var(--space-4)'
+    }
+  }, b), /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontSize: 'var(--text-body)',
+      color: 'var(--ink-100)',
+      marginTop: 'var(--space-3)',
+      lineHeight: 'var(--leading-relaxed)',
+      textWrap: 'pretty'
+    }
+  }, m)))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      flexWrap: 'wrap',
+      gap: 'var(--space-3)',
+      marginTop: 'var(--space-10)',
+      paddingTop: 'var(--space-6)',
+      borderTop: '1px solid var(--border-inverse)'
+    }
+  }, ['Sır saklama yükümlülüğü', 'Menfaat çatışmasından kaçınma', 'Bağımsızlık', 'Açık ve öngörülebilir ücret', 'Zamanında bilgilendirme'].map(d => /*#__PURE__*/React.createElement("span", {
+    key: d,
+    style: {
+      display: 'inline-flex',
+      alignItems: 'center',
+      gap: 7,
+      padding: '8px 14px',
+      borderRadius: 'var(--radius-pill)',
+      border: '1px solid var(--border-inverse)',
+      background: 'rgba(255,255,255,.05)',
+      fontSize: 'var(--text-caption)',
+      fontWeight: 600,
+      color: 'var(--paper-1)'
+    }
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "check",
+    size: 13,
+    color: "var(--brass-400)"
+  }), d))))), /*#__PURE__*/React.createElement("section", {
+    style: {
       background: 'var(--surface-sunken)',
       padding: 'var(--space-16) var(--gutter-page-lg)'
     }
