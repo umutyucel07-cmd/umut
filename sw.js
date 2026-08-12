@@ -1,5 +1,5 @@
 // Umut Yücel Hukuk — çevrimdışı önbellek
-const SURUM = 'uy-v7';
+const SURUM = 'uy-v8';   // 12.08.2026: vendor/ + webp geçişi — eski önbellek temizlensin diye artırıldı
 const VARLIKLAR = ['/', '/index.html', '/icon-192.png', '/icon-512.png', '/apple-touch-icon.png', '/manifest.webmanifest'];
 
 self.addEventListener('install', (e) => {

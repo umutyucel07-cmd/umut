@@ -4,3 +4,8 @@
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: geolocation=(), microphone=(), camera=()
   Strict-Transport-Security: max-age=31536000; includeSubDomains
+
+# Sürüm numarası dosya adında — içerik asla değişmez, bir yıl önbelleklenebilir.
+# Kütüphane güncellenirse DOSYA ADI da değişir, bayat kopya riski yoktur.
+/vendor/*
+  Cache-Control: public, max-age=31536000, immutable
