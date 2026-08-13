@@ -106,38 +106,83 @@ webhook'undan **anında** çıkar; zamanlanmış görev yalnız triyaj süpürge
 Hızı belirleyen ayar `ACK_SOGUMA_SN=3600` (kişi başına 1 saat soğuma) — mesai içinde
 1800'e indirilebilir. **Worker kodu değişikliğidir**, §4'e bakın.
 
-## 4. 🔵 Worker — dördüncü şablon: dosya durumu
+## 4. 🔵 Otomatik gönderim — bugün nerede duruyor
 
-Şu an `/gonder` ucu yalnız üç şablonu kabul ediyor: `alindi` · `sure` · `gorusme`.
-Serbest metni reddediyor (Yön. m.7/c gereği bilinçli sınır).
+Worker kaynağı (`muddy-hat-f441`) ve canlı `/sync` çıktısı 13.08'de okundu.
+Ortaya çıkan tablo, "göndermek tek dokunuşla sizde" varsayımını **düzeltiyor**:
 
-**Triyaj tarafı yapıldı:** Cevap Robotu artık 🔵 MAVİ bandını tanıyor ve dosya durumu
-taslağını hazırlıyor. Ama gönderim için Worker'da dördüncü şablon yok.
+| Katman | Bugünkü durum | Otomatik mi |
+|---|---|---|
+| İlk teyit — `alindi` şablonu | Worker webhook'unda, mesaj gelir gelmez | ✅ **zaten tam otomatik** |
+| `sure` şablonu | `/gonder` ucu var, çağıran yok | ⚙️ kurulabilir |
+| `gorusme` şablonu | `/gonder` ucu var, çağıran yok | ⚙️ kurulabilir |
+| Serbest metin taslakları (YEŞİL · MAVİ · SARI) | Tek dokunuş avukatta | ⛔ **`/gonder` serbest metni kapıda reddediyor** |
+| `dosya` şablonu (MAVİ) | Henüz yok | ⚙️ 4. şablon eklenince otomatik olur |
 
-**Copilot yapacak — `worker.js` içindeki şablon sözlüğüne ekleyin:**
+**Canlı kanıt (13.08 tarihli `/sync` çıktısı):**
+son başarılı gönderim `12.08.2026 12:37 · whatsapp · alindi · gönderildi`;
+kapatma anahtarı `acik`; günlük sayaç `0/40`.
+Yani ilk otomatik yanıt **çalışıyor ve müvekkile ulaşıyor**.
+
+**"Tam otomatik" hedefinin gerçek sınırı:** `/gonder` yalnız `SABLONLAR`
+sözlüğündeki anahtarları kabul eder ve serbest metni
+*"bilinmeyen şablon — serbest metin bu uçtan gönderilemez"* diyerek reddeder.
+Bu kısıt Yön. m.7/c için **bilerek** konuldu. Robotun ürettiği YEŞİL/MAVİ/SARI
+taslaklar serbest metindir; bu yüzden otomatik gidemezler. Otomasyonu artırmanın
+doğru yolu taslakları serbest bırakmak değil, **şablon sayısını artırmaktır.**
+
+### Worker'da doğrulanan ayrıntılar (kaynaktan okundu)
+
+| Kalem | Değer |
+|---|---|
+| `/gonder` kimlik doğrulaması | **`x-anahtar` başlığı** = `env.GONDER_ANAHTARI` (sabit zamanlı karşılaştırma) — `ERISIM_TOKEN`'dan **ayrı** bir sırdır |
+| Kuru çalıştırma | Gövdeye `"kuru": true` → hiçbir şey göndermeden ne gideceğini döndürür |
+| 24 saat penceresi | `lk:<numara>` KV anahtarına bakar; pencere kapalıysa gönderim yapılmaz (Meta kuralı) |
+| Kapatma anahtarı | KV `ayar:gonderim` = `kapali` → **bütün gönderimi durdurur** |
+| Günlük tavan | `GUNLUK_TAVAN = 40` |
+| Kişi başına soğuma | `alindi` için 1 saat (`ACK_SOGUMA_SN`), diğer şablonlar için 24 saat |
+| Token yoksa | `gonderimEngeli` "token yok" döner — hiçbir şey gönderilmez |
+
+### Copilot yapacak — 4. şablon (`dosya`)
+
+`SABLONLAR` sözlüğüne ekleyin:
 
 ```js
-dosya: 'Sayın {ad}, dosyanızla ilgili kayıtlarımızda görünen son durum: {asama}.' +
-       '{tarihSatiri} Ayrıntılı değerlendirme için Av. Umut Yücel tarafından dönüş ' +
-       'sağlanacaktır. Bu mesaj bilgilendirme amaçlıdır; avukat-müvekkil ilişkisi kurmaz.',
+dosya: "Say\u0131n {ad}, dosyan\u0131zla ilgili kay\u0131tlar\u0131m\u0131zda g\u00f6r\u00fcnen son durum: {asama}." +
+       " Ayr\u0131nt\u0131l\u0131 de\u011ferlendirme i\u00e7in Av. Umut Y\u00fccel taraf\u0131ndan d\u00f6n\u00fc\u015f sa\u011flanacakt\u0131r." +
+       " Bu otomatik bir bilgilendirme mesaj\u0131d\u0131r; hukuki de\u011ferlendirme i\u00e7ermez."
 ```
 
-Ve `/gonder` doğrulamasına dört sıkı koşul (atlanırsa şablon eklenmez):
+`gonderUcu` içinde, şablon `dosya` ise **dört ek koşul** (biri bile atlanırsa ekleme yapılmaz):
 
-1. `sablon === 'dosya'` isteği yalnız **kişi rehberinde `muvekkil`** sınıfı için kabul edilir.
-   Diğer her sınıf → `403`. Sebep: dosya bilgisi meslek sırrıdır (AK m.36) ve kişisel veridir.
-2. `asama` ve `tarihSatiri` **sunucuya gönderilen serbest metin olamaz**; yalnız izinli
-   değer kümesinden seçilir (`dilekce_verildi`, `durusma_bekleniyor`, `karar_bekleniyor`,
-   `istinafta`, `icra_asamasinda`, `dosya_kapandi`). Serbest metin kabul edilirse §karantina'daki
-   hatanın aynısı geri gelir.
-3. `tarihSatiri` yalnız `GG.AA.YYYY` biçimini kabul eder; başka içerik reddedilir.
-4. Aynı kişiye `dosya` şablonu **24 saatte bir defadan fazla** gönderilmez.
+1. `kisiOku(env, hedef)` sonucu **`sinif === 'muvekkil'` olmalı**; değilse `403`.
+   Dosya bilgisi meslek sırrıdır (AK m.36) ve kişisel veridir.
+2. `{ad}` ve `{asama}` **serbest metin olarak kabul edilmez.** `ad` yalnız harf ve
+   boşluk (`/^[\p{L} ]{2,60}$/u`); `asama` yalnız şu kümeden:
+   `dilekce_verildi` · `durusma_bekleniyor` · `karar_bekleniyor` · `istinafta` ·
+   `icra_asamasinda` · `dosya_kapandi`. Her biri sabit bir Türkçe karşılığa eşlenir.
+3. Kişi başına **24 saatte bir** (mevcut `cooldown` mekanizması zaten bunu yapıyor).
+4. Kuru çalıştırma zorunlu ilk adım: `{"kuru":true}` ile beklenen metin görülmeden
+   canlı gönderim yapılmaz.
 
-**Neden bu kadar sıkı:** dördüncü şablon, sistemin ilk kez müvekkile **dosyasına özgü
-veri** göndermesi demek. Yanlış kişiye giden tek satır hem KVKK ihlali hem meslek sırrı
-ihlalidir. Şablon serbest metne açılırsa üç şablon kısıtının tüm anlamı kaybolur.
+**Neden bu kadar sıkı:** bu, sistemin müvekkile ilk kez **dosyasına özgü veri**
+göndermesidir. `asama` serbest metne açılırsa üç şablon kısıtının tüm anlamı kaybolur
+ve `/gonder` fiilen serbest metin ucuna dönüşür.
 
----
+### Sonra — otomatik gönderim görevi
+
+4. şablon yayına girince şu zamanlanmış görev kurulabilir (henüz **kurulmadı**):
+hafta içi `30 6-15 * * 1-5` (TR 09:30–18:30, her Mesai turundan 30 dk sonra),
+Notion'da `OTO-TRİYAJ: MAVİ` işaretli ve henüz gönderilmemiş kayıtları alır,
+her biri için `/gonder`'e `{kanal, hedef, sablon:"dosya", ad, asama}` gönderir,
+kayda `GÖNDERİLDİ` notu düşer.
+
+**Kurulamamasının tek sebebi `GONDER_ANAHTARI`.** Bu bir sırdır; Claude ve Copilot
+görmez. Görev kurulacağı zaman anahtarı prompt'a **yalnız Av. Umut Yücel** yazar.
+
+**Acil durdurma:** KV `whatsapp-dedupe` (`aecc61e1db964443bac642c31797a56d`)
+içine `ayar:gonderim` = `kapali` yazmak **bütün otomatik gönderimi anında keser** —
+`alindi` teyidi dâhil. Geri açmak için anahtarı silin ya da `acik` yapın.
 
 ## 5. 🛑 Frenler — inceleme ve gevşetme önerisi
 
