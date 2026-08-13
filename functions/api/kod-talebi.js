@@ -121,7 +121,7 @@ export async function onRequest({ request, env }) {
     // aynısı - gerçekleşmeyecek bir şeyi olmuş gibi söylemek.
     // Artık talep kuyruğa YAZILIYOR; avukat Cloudflare → KV → talep:
     // önekinden görür ve elle gönderir.
-    await talebiKuyruklaGuvenli(env.KOD_KV, muvekkil, tel, 'wa-yok');
+    await talebiKuyruklaGuvenli(env.KOD_KV, muvekkil, tel, 'wa-yok', 'WA_TOKEN/WA_PHONE_ID tanımsız');
     return json({
       ok: true,
       durum: 'kuyruk',
@@ -159,13 +159,18 @@ export async function onRequest({ request, env }) {
       }),
     });
   } catch (aghata) {
-    await talebiKuyruklaGuvenli(env.KOD_KV, muvekkil, tel, 'gonderim-hatasi');
+    // 502 DÖNMÜYORUZ: Cloudflare, 502 durum kodlu yanıtın gövdesini kendi
+    // "error code: 502" sayfasıyla değiştiriyor (13.08 gecesi canlıda ölçüldü;
+    // JSON kayboldu, ekran gerçek sebebi hiç göremedi). 200 + durum:'hata'
+    // hem gerçek mesajı ekrana taşır hem ön yüz sözleşmesini korur.
+    const detay = `fetch: ${String((aghata && aghata.message) || aghata).slice(0, 200)}`;
+    await talebiKuyruklaGuvenli(env.KOD_KV, muvekkil, tel, 'gonderim-hatasi', detay);
     return json({
       ok: false,
       durum: 'hata',
-      mesaj: 'Kodunuz şu anda gönderilemedi. Lütfen kısa süre sonra yeniden deneyiniz.',
-      detay: `fetch: ${String((aghata && aghata.message) || aghata).slice(0, 200)}`,
-    }, 502);
+      mesaj: 'Kodunuz şu anda gönderilemedi; talebiniz not edildi. Büromuz kodu en kısa sürede iletecektir.',
+      detay,
+    });
   }
 
   // SIRA KRİTİK: önce GÖNDER, sonra eskiyi geçersiz kıl. Ters sırada
@@ -173,15 +178,18 @@ export async function onRequest({ request, env }) {
   if (!yanit.ok) {
     const hata = await yanit.text().catch(() => '');
     // Gönderim düştü: kod ÜRETİLDİ ama gitmedi. Eski kod hâlâ geçerli
-    // (aşağıdaki silme satırına HİÇ ulaşılmıyor). Talep yine de kuyruğa
-    // yazılır ki müvekkil unutulmasın.
-    await talebiKuyruklaGuvenli(env.KOD_KV, muvekkil, tel, 'gonderim-hatasi');
+    // (aşağıdaki silme satırına HİÇ ulaşılmıyor). Talep, Meta'nın hata
+    // metniyle BİRLİKTE kuyruğa yazılır: avukat "neden gitmedi"yi KV'den
+    // okur (401=jeton, 131047=24 saat penceresi, 131021=alıcı=gönderici).
+    // Durum kodu 200: 502 gövdesini Cloudflare kendi sayfasıyla değiştiriyor.
+    const detay = `HTTP ${yanit.status}: ${hata.slice(0, 200)}`;
+    await talebiKuyruklaGuvenli(env.KOD_KV, muvekkil, tel, 'gonderim-hatasi', detay);
     return json({
       ok: false,
       durum: 'hata',
-      mesaj: 'Kodunuz şu anda gönderilemedi. Lütfen kısa süre sonra yeniden deneyiniz.',
-      detay: hata.slice(0, 300),
-    }, 502);
+      mesaj: 'Kodunuz şu anda gönderilemedi; talebiniz not edildi. Büromuz kodu en kısa sürede iletecektir.',
+      detay,
+    });
   }
 
   if (muvekkil.kodAnahtar) {
@@ -218,7 +226,7 @@ export async function onRequest({ request, env }) {
  * Bu yazım BAŞARISIZ OLURSA istek düşmez: müvekkile verilen yanıt bundan
  * bağımsızdır. Kuyruk bir kolaylıktır, akışın şartı değildir.
  */
-async function talebiKuyruklaGuvenli(kv, muvekkil, tel, sebep) {
+async function talebiKuyruklaGuvenli(kv, muvekkil, tel, sebep, detay = '') {
   if (!kv) return;
   try {
     const damga = new Date().toISOString();
@@ -230,6 +238,7 @@ async function talebiKuyruklaGuvenli(kv, muvekkil, tel, sebep) {
         ad: muvekkil?.ad || '',
         telSon4: telNormalize(muvekkil?.tel || tel).slice(-4),
         sebep,
+        detay: String(detay).slice(0, 200),
         zaman: damga,
       }),
       { expirationTtl: 30 * 86400 },
