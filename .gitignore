@@ -18,3 +18,6 @@ functions/api/*.KARANTINA
 *-yedek
 *.gomulu-*
 /worker-v6-portal-modulu.js
+
+# FUSE dosya sistemi artiklari - silinen ama acik kalan dosyalarin kopyasi
+.fuse_hidden*
