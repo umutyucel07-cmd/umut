@@ -52,6 +52,33 @@ for k in "<noscript" '"Person"' "vendor/"; do
 done
 printf '%s' "$ANA" | grep -q "unpkg" && { echo "  ❌ ana sayfada unpkg belirdi"; acik=$((acik+1)); }
 
+# ── Fonksiyon ucu hâlâ çalışıyor mu ─────────────────────────────────────────
+#  Yayın dizini değişikliğinin en gerçek riski budur: Pages, functions/
+#  klasörünü _site içinde bulamazsa /api/kod-talebi Function olarak
+#  kaydolmaz, SPA yedeğine düşer ve HTML döner.
+#
+#  13.08.2026 ölçümü: Pages functions/ dizinini statik varlıklardan DIŞLIYOR
+#  (/functions/api/kod-talebi.js kaynak kodu sunmuyor), /api/kod-talebi ise
+#  JSON dönüyor. Yani kopyalama güvenli. Bu kontrol o varsayımı her
+#  dağıtımda yeniden sınar.
+UC=$(curl -s --max-time 15 "$KOK/api/kod-talebi" || true)
+if printf '%s' "$UC" | grep -q '"service":"kod-talebi"'; then
+  echo "  ✅ /api/kod-talebi Function olarak çalışıyor"
+else
+  echo "  ❌ /api/kod-talebi JSON dönmüyor — Function kaydolmamış olabilir"
+  echo "     Gelen: $(printf '%s' "$UC" | head -c 80)"
+  acik=$((acik+1))
+fi
+
+# Fonksiyon kaynağı statik olarak sunulmamalı
+KAYNAK=$(curl -s --max-time 15 "$KOK/functions/api/kod-talebi.js" || true)
+if printf '%s' "$KAYNAK" | grep -q "onRequest"; then
+  echo "  ❌ functions/ kaynak kodu statik sunuluyor — beyaz listeden çıkarın"
+  acik=$((acik+1))
+else
+  echo "  ✅ functions/ kaynağı sunulmuyor"
+fi
+
 if [ "$acik" -eq 0 ]; then echo "✅ Sızıntı yok, ana sayfa sağlam."; exit 0; fi
 echo "❌ $acik sorun var."
 echo "   Yayın dizini ayarı yapılmadıysa: Pages → Settings → Builds"
