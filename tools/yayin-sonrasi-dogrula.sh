@@ -53,9 +53,9 @@ awk -v t="$rt" 'BEGIN{ if (t+0>3) exit 1 }' && iyi "Render yanıtı hızlı (${r
 if command -v wrangler >/dev/null 2>&1 || command -v npx >/dev/null 2>&1; then
   W="wrangler"; command -v wrangler >/dev/null 2>&1 || W="npx wrangler"
   bugun="sayac:gonderim:$(date -u +%Y-%m-%d 2>/dev/null || echo 0000-00-00)"
-  say="$($W kv key get "$bugun" --namespace-id "$DEDUPE_KV" --remote 2>/dev/null || echo '')"
-  [ -n "$say" ] && iyi "bugün otomatik teyit sayacı: $say (mesaj ulaşıyor)" || npd "bugün otomatik teyit YOK — hatta mesaj ulaşmamış olabilir (Adım 1)"
-else
+  say="$($W kv key get "$bugun" --namespace-id "$DEDUPE_KV" --remote 2>/dev/null | head -1)"; case "$say" in ''|*[!0-9]*) say='';; esac
+  [ -n "$say" ] && iyi "bugün otomatik teyit sayacı: $say (mesaj ulaşıyor)" || npd "bugün teyit sayacı yok ya da okunamadı (wrangler login? / Adım 1)"
+  else
   printf '     (wrangler yok — KV okumaları atlandı)\n'
 fi
 
