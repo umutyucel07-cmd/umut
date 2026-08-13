@@ -53,10 +53,14 @@ export async function onRequest({ request, env }) {
   }
 
   if (!env.KOD_KV) {
+    // "Talebiniz alınmıştır" DEMİYORUZ. KV bağlı değilken talep hiçbir yere
+    // yazılamaz; yazılamayan bir talep için verilen söz tutulamaz. 13.08'de
+    // kuyruk yazımı tam bu yüzden eklenmişti — kuyruğun kendisi yokken aynı
+    // sözü tekrarlamak, düzelttiğimiz hatanın kopyası olurdu.
     return json({
       ok: true,
-      durum: 'kuyruk',
-      mesaj: 'Talebiniz alınmıştır. Kodunuz en geç mesai saatleri içinde tarafınıza iletilecektir.',
+      durum: 'hazir-degil',
+      mesaj: 'Kod gönderimi şu anda hazırlanmaktadır. Lütfen kısa süre sonra yeniden deneyiniz ya da büromuza ulaşınız.',
     });
   }
 
@@ -74,12 +78,18 @@ export async function onRequest({ request, env }) {
   // Dizin hiç yüklenmemişse bu bir EŞLEŞMEME değil, YAPILANDIRMA eksiğidir.
   // Müvekkile "kayıtlarımızla eşleşmedi" demek yanlış olur — 12.08'de canlıda
   // tam olarak bu yalan söylenmişti, tekrarlanmayacak.
+  //
+  // AMA "talebiniz alınmıştır" demek de yanlıştı; 13.08 akşamı canlıda ölçüldü:
+  // bu dal söz veriyor ve talebi HİÇBİR YERE yazmıyordu. Kuyruğa yazamayız da —
+  // kuyruk yalnız EŞLEŞEN müvekkili saklar, eşleştirmenin hiç yapılamadığı bir
+  // anda yazmak, büroyla ilişkisi belirsiz kişilerin ad ve telefonunu toplamak
+  // olurdu. İki kötü seçenek arasında doğru olan üçüncüsü: söz vermemek.
   const dizin = await env.KOD_KV.get('sys:dizin', { type: 'json' });
   if (!dizin || !dizin.adet) {
     return json({
       ok: true,
-      durum: 'kuyruk',
-      mesaj: 'Talebiniz alınmıştır. Kodunuz en geç mesai saatleri içinde tarafınıza iletilecektir.',
+      durum: 'hazir-degil',
+      mesaj: 'Kod gönderimi şu anda hazırlanmaktadır. Lütfen kısa süre sonra yeniden deneyiniz ya da büromuza ulaşınız.',
     });
   }
 

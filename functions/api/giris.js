@@ -74,6 +74,27 @@ export async function onRequest({ request, env }) {
     }, 429);
   }
 
+  // Dizin henüz yüklenmemişse bu bir EŞLEŞMEME değil, KURULUM eksiğidir.
+  //
+  // Bu guard olmadan, dizin yüklenene kadar DOĞRU biçimli her kod
+  // "kayıtlarımızla eşleşmemektedir" yanıtı alır. 13.08 akşamı canlıda
+  // ölçüldü: KOD_KV bağlı ama boş; uç geçerli biçimli bir koda "eşleşmedi"
+  // diyordu. Bu, 12.08'de düzelttiğimiz yalanın aynısı — yalnız başka bir
+  // dalda. Yukarıdaki `!env.KOD_KV` guard'ı yalnız BAĞLANTI eksiğini
+  // yakalıyordu; bağlı ama BOŞ olma hâlini yakalamıyordu.
+  //
+  // Frenlerden SONRA duruyor: bu bir KV okuması ve frenden önce çalışsaydı
+  // sınırsız okuma yolu açardı. Müvekkilin deneme hakkı yine yanmıyor —
+  // js/oturum.js 'hazir-degil' yanıtında sayacı artırmıyor.
+  const dizin = await env.KOD_KV.get('sys:dizin', { type: 'json' });
+  if (!dizin || !dizin.adet) {
+    return json({
+      ok: false,
+      durum: 'hazir-degil',
+      mesaj: 'Müvekkil girişi şu anda hazırlanmaktadır. Lütfen kısa süre sonra yeniden deneyiniz ya da tarafımıza ulaşınız.',
+    }, 503);
+  }
+
   const biber = await biberAl(env.KOD_KV);
   const kayit = await env.KOD_KV.get(await kodAnahtari(biber, kod), { type: 'json' });
 
