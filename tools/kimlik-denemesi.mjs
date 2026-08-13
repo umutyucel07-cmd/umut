@@ -35,21 +35,34 @@ const kontrol = (ad, kosul, ek = '') => {
 };
 
 async function calistir() {
-  // ---- 1. KV yokken: kuyruk, yalan yok ----------------------------------
+  // ---- 1. KV yokken: söz VERİLMEZ ---------------------------------------
+  // ESKİ BEKLENTİ 'kuyruk' İDİ VE YANLIŞTI: bu dal "talebiniz alınmıştır"
+  // diyor, ama KV bağlı olmadığı için talebi yazacağı yer yok. Söz veriliyor,
+  // talep kayboluyordu. Doğru davranış: söz vermemek.
   let r = await kodTalebi({ request: istek({ ad: 'Ayşe Yılmaz', tel: '05320000000' }), env: {} });
   let c = await r.json();
-  kontrol('KV yokken kod talebi kuyruğa alınır', c.durum === 'kuyruk', JSON.stringify(c));
+  kontrol('KV yokken kod talebi SÖZ VERMEZ', c.durum === 'hazir-degil', JSON.stringify(c));
+  kontrol('KV yokken "alınmıştır" denmez', !/alınmıştır|iletilecek/i.test(c.mesaj || ''), JSON.stringify(c));
 
   r = await giris({ request: istek({ kod: 'UY-ABCD-EFGH' }), env: {} });
   c = await r.json();
   kontrol('KV yokken giriş "hazır değil" der, "kod yanlış" DEMEZ', c.durum === 'hazir-degil', JSON.stringify(c));
 
-  // ---- 2. Dizin boşken: kuyruk (eşleşmedi DEĞİL) ------------------------
+  // ---- 2. Dizin boşken: söz VERİLMEZ, "eşleşmedi" de DENMEZ -------------
   const kv = KV();
   const env = { KOD_KV: kv, WA_PHONE_ID: '109650188830111', WA_TOKEN: 'sahte' };
   r = await kodTalebi({ request: istek({ ad: 'Ayşe Yılmaz', tel: '05320000000' }), env });
   c = await r.json();
-  kontrol('dizin boşken kuyruk döner (eşleşmedi demez)', c.durum === 'kuyruk', JSON.stringify(c));
+  kontrol('dizin boşken kod talebi SÖZ VERMEZ', c.durum === 'hazir-degil', JSON.stringify(c));
+  kontrol('dizin boşken "eşleşmedi" DENMEZ', c.durum !== 'yok', JSON.stringify(c));
+
+  // Dizin boşken GİRİŞ de "kod yanlış" dememeli. 13.08 akşamı canlıda ölçüldü:
+  // KOD_KV bağlı ama boşken doğru biçimli bir kod "kayıtlarımızla
+  // eşleşmemektedir" yanıtı alıyordu — 12.08'de düzeltilen yalanın başka dalı.
+  r = await giris({ request: istek({ kod: 'UY-ABCD-EFGH' }), env });
+  c = await r.json();
+  kontrol('dizin boşken giriş "hazır değil" der, "kod yanlış" DEMEZ', c.durum === 'hazir-degil', JSON.stringify(c));
+  kontrol('dizin boşken giriş 503 döner (401 değil)', r.status === 503, `status=${r.status}`);
 
   // ---- 3. Dizini yükle (muvekkil-yukle.js ile AYNI hesap) ---------------
   const biber = await kv.get('sys:biber');

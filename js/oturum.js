@@ -113,7 +113,9 @@
 
     // Kod talebi. Eşleştirme ARTIK SUNUCUDA yapılır; tarayıcı kimin müvekkil
     // olduğunu bilmez ve öğrenemez.
-    // Dönen: {durum: gonderildi|kuyruk|yok|eksik|sik|kanal-yok, mesaj}
+    // Dönen: {durum: gonderildi|kuyruk|yok|eksik|sik|kanal-yok|hazir-degil, mesaj}
+    // 'hazir-degil' = KV bağlı değil ya da müvekkil dizini henüz yüklenmemiş.
+    // Bu durumda söz VERİLMEZ; ekranda "hazırlanmaktadır" yazar.
     kodTalep: function (ad, tel, kanal) {
       kanal = kanal === 'eposta' ? 'eposta' : 'whatsapp';
       var hedef = kanal === 'eposta' ? 'kayıtlı e-posta adresinize' : 'kayıtlı WhatsApp numaranıza';
