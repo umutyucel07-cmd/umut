@@ -107,11 +107,24 @@ async function calistir() {
   r = await giris({ request: istek({ kod: kod2 }), env });
   kontrol('WA yokken mevcut kod İPTAL EDİLMEZ', r.status === 200);
 
+  // ---- 9b. WA yokken talep KUYRUĞA YAZILIR -----------------------------
+  const kuyrukAnahtarlari = [...kv._m.keys()].filter((k) => k.startsWith('talep:'));
+  kontrol('WA yokken talep kuyruğa yazılır', kuyrukAnahtarlari.length === 1,
+          JSON.stringify(kuyrukAnahtarlari));
+  const kayitKuyruk = JSON.parse(kv._m.get(kuyrukAnahtarlari[0]) || '{}');
+  kontrol('kuyrukta ad var', kayitKuyruk.ad === 'Ayşe Yılmaz', JSON.stringify(kayitKuyruk));
+  kontrol('kuyrukta TAM telefon YOK', !JSON.stringify(kayitKuyruk).includes('5320000000'),
+          JSON.stringify(kayitKuyruk));
+  kontrol('kuyrukta son dört hane var', kayitKuyruk.telSon4 === '0000', kayitKuyruk.telSon4);
+
   // ---- 10. Eşleşmeyen müvekkil -----------------------------------------
   await kv.delete('kfr:1.2.3.4');
   r = await kodTalebi({ request: istek({ ad: 'Bilinmeyen Kişi', tel: '05559998877' }), env });
   c = await r.json();
   kontrol('eşleşmeyen ad+telefon "yok" döner', c.durum === 'yok');
+  kontrol('eşleşmeyen kişi kuyruğa YAZILMAZ',
+          [...kv._m.keys()].filter((k) => k.startsWith('talep:')).length === 1,
+          'büro ile ilişkisi olmayan kişinin verisi kaydedilmemeli');
 
   // ---- 11. Fren -------------------------------------------------------
   await kv.delete('kfr:1.2.3.4');

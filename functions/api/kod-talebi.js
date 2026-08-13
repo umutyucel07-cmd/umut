@@ -98,6 +98,14 @@ export async function onRequest({ request, env }) {
   if (!phoneId || !token) {
     // Gönderemeyeceksek kod ÜRETMİYORUZ. Üretip gönderememek, müvekkilin
     // elindeki çalışan kodu sessizce iptal etmek demektir.
+    //
+    // AMA "talebiniz alındı" demek de tek başına YETMEZ. 13.08'e kadar bu dal
+    // müvekkile söz veriyor ve talebi HİÇBİR YERE yazmıyordu: kimin kod
+    // istediği kaybolduğu için o söz tutulamazdı. Bugün onardığımız hatanın
+    // aynısı - gerçekleşmeyecek bir şeyi olmuş gibi söylemek.
+    // Artık talep kuyruğa YAZILIYOR; avukat Cloudflare → KV → talep:
+    // önekinden görür ve elle gönderir.
+    await talebiKuyruklaGuvenli(env.KOD_KV, muvekkil, tel, 'wa-yok');
     return json({
       ok: true,
       durum: 'kuyruk',
@@ -133,6 +141,10 @@ export async function onRequest({ request, env }) {
   // gönderim hata verirse müvekkil hem eski hem yeni kodsuz kalırdı.
   if (!yanit.ok) {
     const hata = await yanit.text().catch(() => '');
+    // Gönderim düştü: kod ÜRETİLDİ ama gitmedi. Eski kod hâlâ geçerli
+    // (aşağıdaki silme satırına HİÇ ulaşılmıyor). Talep yine de kuyruğa
+    // yazılır ki müvekkil unutulmasın.
+    await talebiKuyruklaGuvenli(env.KOD_KV, muvekkil, tel, 'gonderim-hatasi');
     return json({
       ok: false,
       durum: 'hata',
@@ -157,4 +169,39 @@ export async function onRequest({ request, env }) {
     durum: 'gonderildi',
     mesaj: 'Kodunuz kayıtlı WhatsApp numaranıza gönderilmiştir. Bu kod önceki kodunuzun yerine geçer.',
   });
+}
+
+/**
+ * Bekleyen kod talebini KV'ye yazar.
+ *
+ * NE YAZILIR: müvekkilin adı, telefonunun SON DÖRT hanesi ve sebep.
+ * Tam telefon numarası YAZILMAZ - avukat zaten kendi kayıtlarından bulur,
+ * kuyruk kaydının onu tekrarlamasına gerek yok.
+ *
+ * KİM YAZILIR: yalnız EŞLEŞEN müvekkil. Eşleşmeyen bir talep bu noktaya hiç
+ * ulaşmaz; büroyla ilişkisi olmayan kişinin adı ve numarası kaydedilmez.
+ *
+ * NEREDE GÖRÜLÜR: Cloudflare → Workers KV → uy-portal-kimlik → "talep:" öneki.
+ * 30 gün sonra kendiliğinden düşer.
+ *
+ * Bu yazım BAŞARISIZ OLURSA istek düşmez: müvekkile verilen yanıt bundan
+ * bağımsızdır. Kuyruk bir kolaylıktır, akışın şartı değildir.
+ */
+async function talebiKuyruklaGuvenli(kv, muvekkil, tel, sebep) {
+  if (!kv) return;
+  try {
+    const damga = new Date().toISOString();
+    const rastgele = [...crypto.getRandomValues(new Uint8Array(4))]
+      .map((b) => b.toString(16).padStart(2, '0')).join('');
+    await kv.put(
+      `talep:${damga}-${rastgele}`,
+      JSON.stringify({
+        ad: muvekkil?.ad || '',
+        telSon4: telNormalize(muvekkil?.tel || tel).slice(-4),
+        sebep,
+        zaman: damga,
+      }),
+      { expirationTtl: 30 * 86400 },
+    );
+  } catch { /* kuyruk yazılamadı; akış etkilenmez */ }
 }
