@@ -21,15 +21,22 @@
     var iyi = s.sonuc && (s.sonuc.durum === 'gonderildi' || s.sonuc.durum === 'kuyruk');
     return e(Card, { padding: 'sm', topRule: true },
       e('div', { style: { display: 'flex', alignItems: 'center', gap: 8, fontSize: 'var(--text-caption)', fontWeight: 700, letterSpacing: '.08em', color: 'var(--brass-700)' } }, e(Icon, { name: 'key-round', size: 14 }), 'ERİŞİM KODU TALEBİ'),
-      e('p', { style: { fontSize: 'var(--text-caption)', color: 'var(--text-muted)', marginTop: 6, lineHeight: 'var(--leading-relaxed)' } }, 'Kodunuzu bilmiyorsanız ad soyadınızı ve büromuza kayıtlı telefon numaranızı yazınız. Bilgileriniz kayıtlarımızla eşleşirse kodunuz seçtiğiniz kanaldan — kayıtlı WhatsApp numaranıza ya da e-posta adresinize — kendiliğinden gönderilir; kod ekranda gösterilmez.'),
+      e('p', { style: { fontSize: 'var(--text-caption)', color: 'var(--text-muted)', marginTop: 6, lineHeight: 'var(--leading-relaxed)' } }, 'Ad soyadınızı ve büromuza kayıtlı telefon numaranızı yazınız. Bilgileriniz kayıtlarımızla eşleşirse erişim kodunuz kayıtlı WhatsApp numaranıza gönderilir; kod ekranda gösterilmez. Her talepte yeni kod üretilir ve önceki kodunuz geçersiz olur.'),
       e('form', { onSubmit: gonder, style: { display: 'flex', flexDirection: 'column', gap: 'var(--space-3)', marginTop: 'var(--space-3)' } },
         e(Input, { label: 'Ad Soyad', placeholder: 'Adınız Soyadınız', value: s.ad, onChange: function (ev) { var v = ev.target.value; set(function (p) { return Object.assign({}, p, { ad: v, sonuc: null }); }); } }),
         e(Input, { label: 'Kayıtlı telefon', placeholder: '05xx xxx xx xx', inputMode: 'tel', value: s.tel, onChange: function (ev) { var v = ev.target.value; set(function (p) { return Object.assign({}, p, { tel: v, sonuc: null }); }); } }),
-        e('div', { style: { display: 'flex', gap: 8 } }, [['whatsapp', 'WhatsApp ile'], ['eposta', 'E-posta ile']].map(function (k) {
-          var secili = s.kanal === k[0];
-          return e('button', { key: k[0], type: 'button', onClick: function () { set(function (p) { return Object.assign({}, p, { kanal: k[0], sonuc: null }); }); }, style: { flex: 1, padding: '7px 10px', borderRadius: 'var(--radius-sm)', border: '1px solid ' + (secili ? 'var(--brass-600)' : 'var(--border-default)'), background: secili ? 'var(--surface-sunken)' : 'var(--surface-card, #fff)', font: 'inherit', fontSize: 'var(--text-caption)', fontWeight: 600, color: secili ? 'var(--brass-700)' : 'var(--text-muted)', cursor: 'pointer' } }, k[1]);
-        })),
+        // KANAL SECIMI KALDIRILDI (13.08.2026).
+        // E-posta kanali sunucuda kapali: MailChannels'in Workers icin ucretsiz
+        // servisi sona erdi ve yerine saglayici baglanmadi. Dugme ekranda
+        // dururken sunucunun "bu kanal kullanilamiyor" demesi, muvekkile once
+        // bir secenek gosterip sonra geri almaktir. Secenek kaldirildi.
+        // Kanal geri acilirsa once /api/kod-talebi icindeki 'kanal-yok' dali
+        // kaldirilmali, sonra bu dugmeler geri konmali - bu sirayla.
         e(Button, { type: 'submit', size: 'sm', block: true, variant: 'secondary', icon: 'send', loading: s.bekle, onClick: gonder }, s.bekle ? 'İletiliyor' : 'Kodumu gönder')),
+      // KVKK m.10 aydinlatma yukumlulugu: bu form kisisel veri (ad + telefon)
+      // topluyor. Randevu formunda aydinlatma vardi, burada YOKTU.
+      e('p', { style: { fontSize: 'var(--text-caption)', color: 'var(--text-faint)', marginTop: 'var(--space-2)', lineHeight: 'var(--leading-relaxed)' } },
+        'Bu formda verdiğiniz ad ve telefon bilgisi yalnızca kimliğinizin doğrulanması ve erişim kodunun tarafınıza iletilmesi amacıyla işlenir; başka bir amaçla kullanılmaz ve üçüncü kişilerle paylaşılmaz. Ayrıntılı bilgi sitemizdeki KVKK Aydınlatma Metni’nde yer almaktadır.'),
       s.sonuc ? e('div', { style: { display: 'flex', gap: 8, marginTop: 'var(--space-3)', padding: 'var(--space-3)', borderRadius: 'var(--radius-sm)', background: 'var(--surface-sunken)' } },
         e(Icon, { name: iyi ? 'check-circle-2' : 'alert-circle', size: 15, color: iyi ? 'var(--brass-700)' : 'var(--text-faint)', style: { flex: '0 0 auto', marginTop: 2 } }),
         e('span', { style: { fontSize: 'var(--text-caption)', color: 'var(--text-body)', lineHeight: 'var(--leading-relaxed)' } }, s.sonuc.mesaj,
