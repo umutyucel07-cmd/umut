@@ -112,6 +112,18 @@ KAR=0
 kontrol "karantina ucu"     "$KAR" 0 \
         "Çift webhook + serbest metin gönderimi; NEDEN-KARANTINADA.md okunmadan geri konmaz"
 
+
+# ACIK BELGE: Pages depodaki her dosyayi yayinlar. Kok dizindeki her .md
+# _redirects icinde 404'lenmis olmali; yoksa ic belge canliya sizar.
+# 13.08.2026: yirmi dosya bu sekilde acik bulundu.
+KAPANMAMIS=0
+for m in *.md; do
+  [ -e "$m" ] || continue
+  grep -qF "/$m" _redirects 2>/dev/null || { echo "  ⚠️  _redirects'te kapatilmamis belge: $m"; KAPANMAMIS=$((KAPANMAMIS+1)); }
+done
+kontrol "acik ic belge"     "$KAPANMAMIS" 0 \
+        "Her kok .md dosyasi _redirects icinde 404 almali (Yon. m.7/d kapali liste)"
+
 echo "────────────────────────────────────────────────────────────"
 if [ "$hata" -eq 1 ]; then
   cat <<'SON'
