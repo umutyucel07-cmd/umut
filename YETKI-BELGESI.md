@@ -21,39 +21,107 @@ geçiremesin. Yayına çıkan her satır avukat onayından geçer.
 | `.github/CODEOWNERS` | ✅ **Eklendi** | Tüm dosyalar için inceleyici avukat |
 | `.github/workflows/imza-dogrulama.yml` | ✅ **Eklendi** | Her PR'de çalışır |
 | Yerel yayın kapısı | ✅ **Zaten vardı** | `pre-commit` + `pre-push` hook |
-| **main ruleset (dal koruması)** | ❌ **KURULAMADI** | Aşağıya bakınız |
-| Ajan yalnız PR ile yazar | ⚠️ **Usulî** | Ruleset olmadığı için zorlayıcı değil |
+| **main ruleset (dal koruması)** | ✅ **KURULDU** | 13.08.2026 · depo public yapıldı |
+| Ajan yalnız PR ile yazar | ✅ **Zorlayıcı** | Doğrudan push GitHub tarafından reddediliyor |
 
 ---
 
-## ❌ Kurulamayan: main dal koruması
+## ✅ main dal koruması — kuruldu
 
-**Sebep:** Bu depo **private** ve hesap **ücretsiz plandadır**. GitHub,
-private depolarda dal koruma kurallarını (ruleset / branch protection)
-yalnız **Pro** ve üzeri planlarda açar.
+**13.08.2026:** Depo public yapıldı, ruleset `main-koruma` (id 20775557)
+kuruldu ve **canlı test edildi.**
 
-API yanıtı:
+Yürürlükteki kurallar:
+
+| Kural | Durum |
+|---|---|
+| Restrict deletions | ✅ |
+| Block force pushes | ✅ |
+| Require a pull request — **1 onay** | ✅ |
+| Dismiss stale approvals on push | ✅ |
+| Require review from Code Owners | ✅ |
+| Require status check — `Butunluk ve imza denetimi` | ✅ |
+| Require conversation resolution | ✅ |
+| **Bypass list** | ✅ **boş** (`current_user_can_bypass: never`) |
+
+Test: `main`e doğrudan push denendi, GitHub reddetti —
 
 ```
-403 — Upgrade to GitHub Pro or make this repository public
-      to enable this feature.
+- Changes must be made through a pull request.
+- Required status check "Butunluk ve imza denetimi" is expected.
 ```
 
-**Bu ne demek:** "Require a pull request", "Required approvals: 1",
-"Require review from Code Owners", "Block force pushes", "Require status
-checks" kurallarının **hiçbiri** şu anda yürürlüğe konamaz. `main` dalı
-teknik olarak korumasızdır — yetkisi olan biri doğrudan push edebilir.
+> Bypass listesi boş olduğu için **avukat da dahil hiç kimse** `main`e
+> doğrudan yazamaz. Bu kasıtlı: yayına çıkan her satır PR'den geçer.
 
-### Üç seçenek
+---
 
-1. **GitHub Pro'ya yükseltmek** (aylık ücretli) — belgedeki düzen aynen kurulur.
-2. **Depoyu public yapmak** — ruleset ücretsiz açılır. **Önerilmez:**
-   depoda müvekkil portalı uç noktaları ve büro yapılandırması var.
-3. **Usulî disiplinle devam etmek** (şu anki durum) — koruma GitHub
-   tarafından zorlanmaz, kurala uyulmasıyla sağlanır. Yerel `pre-push`
-   kapısı ve CI denetimi yine çalışır.
+## ⚠️ Depo public — bunun anlamı
 
-> Seçim yapılana kadar `main` korumasızdır. Bu belge onu gizlemez.
+Ruleset'i açmak için depo public yapıldı. Bu, **tüm geçmişin de dünyaya
+açık olduğu** anlamına gelir; silinen dosyalar dahil.
+
+13.08.2026 tarihinde tam geçmiş taraması yapıldı (20 commit):
+
+| Tarama | Sonuç |
+|---|---|
+| Gerçek API anahtarı deseni | ✅ yok (`EAA...` eşleşmeleri base64 görüntü verisiydi) |
+| `functions/` sabit kodlanmış sır | ✅ yok |
+| Müvekkil kimlik verisi | ✅ yok (`KODLAR` örnekleri uydurma, portföyde yoklar) |
+| **`.env.example` dolu değer** | ❌ **bulundu — aşağıya bakınız** |
+
+
+---
+
+## ❌ Bulunan sızıntı: webhook doğrulama token'ı
+
+`.env.example` dosyası bir **örnek** dosya olmasına rağmen iki alanda gerçek
+değer taşıyordu:
+
+```
+WA_VERIFY_TOKEN=avumutyucel-2026-webhook
+VERIFY_TOKEN=avumutyucel-2026-webhook
+```
+
+Depo public yapıldığı anda bu değer dünyaya açıldı. Dosya temizlendi, ancak:
+
+> **Dosyayı temizlemek yeterli DEĞİLDİR.** Değer git geçmişinde duruyor ve
+> public depoda geçmiş de okunabilir. Ayrıca GitHub'ın önbelleği ve olası
+> fork/klonlar temizlenemez.
+
+### Yapılması gereken — token yenilenmeli
+
+Bu token, Meta'nın webhook uç noktasını doğrularken kullandığı paylaşılan
+sırdır. Bilen biri doğrudan mesaj okuyamaz veya gönderemez; asıl risk,
+webhook doğrulama el sıkışmasının taklit edilebilmesidir.
+
+**Adımlar (yalnız avukat yapabilir):**
+
+1. Yeni bir doğrulama token'ı üretin (tahmin edilemez olsun — tarih veya
+   isim içermesin).
+2. Meta for Developers → uygulamanız → WhatsApp → Configuration →
+   Webhook → **Verify token** alanını yenisiyle güncelleyin.
+3. Cloudflare Pages → proje → Settings → Environment variables →
+   `WA_VERIFY_TOKEN` ve `VERIFY_TOKEN` değerlerini yenisiyle güncelleyin.
+4. Webhook'u yeniden doğrulatın ve test mesajıyla çalıştığını teyit edin.
+
+Bu adımlar tamamlanana kadar eski token geçerlidir.
+
+### Neden geçmiş temizlenmedi
+
+Geçmişi yeniden yazmak (`filter-repo`, `BFG`) tüm commit karmalarını
+değiştirir, klonları bozar ve zaten yayılmış olan değeri geri getirmez.
+Bu ölçekteki bir sır için doğru çözüm **yenilemektir**, geçmişi silmek
+değil.
+
+### Kalıcı önlem
+
+`.env.example` dosyasının başına uyarı eklendi: bu depo public'tir, örnek
+dosyaya hiçbir gerçek değer yazılmaz. Gerçek değerler yalnız Cloudflare
+Pages panosunda tanımlanır.
+
+`KODLAR` satırındaki isimler (Elif Şahin, Murat Kaya) müvekkil portföyüne
+karşı kontrol edildi — **uydurma örneklerdir**, gerçek müvekkil değildir.
 
 ---
 
@@ -127,7 +195,8 @@ git diff HEAD~5..HEAD
 |---|---|
 | 13.08.2026 | CODEOWNERS, imza-dogrulama.yml, bu belge eklendi (PR ile) |
 | 13.08.2026 | Secrets listesi doğrulandı — boş |
-| 13.08.2026 | Ruleset denendi — plan yetersizliği nedeniyle kurulamadı |
+| 13.08.2026 | Depo public yapıldı; ruleset `main-koruma` kuruldu ve test edildi |
+| 13.08.2026 | Public geçmiş taraması: `.env.example` içinde webhook token'ı bulundu, temizlendi — **yenilenmesi gerekiyor** |
 | 13.08.2026 | `.fuse_hidden*` artıkları temizlendi, `.gitignore`'a eklendi |
 
 Yetki verildiğinde ve geri alındığında ortak hafızadaki "Haftalık nabız"
