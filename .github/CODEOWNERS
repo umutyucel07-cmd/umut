@@ -1,0 +1,31 @@
+# Kod sahipliği — Av. Umut Yücel Hukuk Bürosu
+#
+# Bu depodaki HER dosyanın inceleyicisi avukatın kendisidir.
+# "Require review from Code Owners" kuralı açıksa, hiçbir PR avukatın
+# onayı olmadan birleşemez.
+#
+# UYARI: Bu dosya tek başına yeterli DEĞİLDİR. Zorlayıcı olması için
+# main dalında "Require a pull request" + "Require review from Code
+# Owners" kuralları açık olmalıdır. Private depoda bu kurallar GitHub
+# Pro gerektirir; plan yükseltilene kadar koruma usulî kalır.
+
+# Varsayılan: her şey
+*                           @umutyucel07-cmd
+
+# Yayına doğrudan çıkan yüzeyler
+/index.html                 @umutyucel07-cmd
+/manifest.webmanifest       @umutyucel07-cmd
+/sw.js                      @umutyucel07-cmd
+/_headers                   @umutyucel07-cmd
+/_redirects                 @umutyucel07-cmd
+
+# Künye tek kaynağı ve eşitleyicileri
+/js/buro-bilgi.js           @umutyucel07-cmd
+/tools/                     @umutyucel07-cmd
+
+# Sunucu tarafı ve uç noktalar
+/functions/                 @umutyucel07-cmd
+
+# Deponun kendi kuralları ve denetimi
+/.github/                   @umutyucel07-cmd
+/CLAUDE.md                  @umutyucel07-cmd
