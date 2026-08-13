@@ -9,3 +9,10 @@
 # Kütüphane güncellenirse DOSYA ADI da değişir, bayat kopya riski yoktur.
 /vendor/*
   Cache-Control: public, max-age=31536000, immutable
+
+# İç belgeler yanlışlıkla erişilebilir kalırsa hiç değilse dizine girmesin.
+# Asıl koruma _redirects içindeki 404 kurallarıdır; bu ikinci katman.
+/*.md
+  X-Robots-Tag: noindex, nofollow, noarchive
+/tools/*
+  X-Robots-Tag: noindex, nofollow, noarchive

@@ -1,5 +1,51 @@
 # Cloudflare Pages yönlendirmeleri
+# ============================================================================
+#  ⚠️ 13.08.2026 — İÇ BELGELER KAPATILDI
+#
+#  BULGU: Cloudflare Pages depodaki HER dosyayı yayınlar. Bu yüzden
+#  /COPILOT-YAYIN.md, /PORTAL-KURULUM.md, /.env.example ve tools/ altındaki
+#  scriptler canlı sitede AÇIK duruyordu — ölçüldü, içerik geliyordu.
+#
+#  Neden önemli: (1) iç mimari, Worker adı, KV kimliği ve portal tasarımı
+#  dışarıya görünüyordu; (2) TBB Reklam Yasağı Yön. m.7/d sitede
+#  bulunabilecekleri KAPALI LİSTE olarak sayar — mühendislik belgeleri o
+#  listede yoktur.
+#
+#  Sızmayan: ERISIM_TOKEN hiçbir yayınlanan belgede geçmiyor (doğrulandı).
+#  .env.example değerleri de boş.
+#
+#  KALICI ÇÖZÜM (Copilot): belgeleri yayın kökünden çıkarın — ya nokta ile
+#  başlayan bir klasöre taşıyın ya da Pages projesinde ayrı bir build çıktı
+#  dizini tanımlayın. Aşağıdaki kurallar o yapılana kadar geçerli KAPAKTIR.
+#
+#  SIRA ÖNEMLİ: 404 kuralları, en alttaki tek sayfa yedeğinden ÖNCE gelmeli.
+# ============================================================================
+
 # www → apex (tek adres, çift içerik yok)
 https://www.avumutyucelhukuk.com/*  https://avumutyucelhukuk.com/:splat  301
-# tek sayfalık uygulama: bilinmeyen yol ana sayfaya düşer
+
+# ── iç belgeler: 404 ────────────────────────────────────────────────────────
+/.env.example                                 /  404
+/00-DURDUR-WEBHOOK-GOREVI.md                  /  404
+/CANLI-YAYIN-KONTROL-RAPORU.md                /  404
+/CLAUDE-CANLI-YAYIN-KONTROLU.md               /  404
+/CLAUDE-TAMAMLANDI-ISLEM-LISTESI.md           /  404
+/CLAUDE.md                                    /  404
+/COPILOT-GOREV-PAKETI-13-08.md                /  404
+/COPILOT-KUNYE-TEK-KAYNAK.md                  /  404
+/COPILOT-YAYIN.md                             /  404
+/FACEBOOK-CROSSPOST-TASK.md                   /  404
+/JETON-DONDURME-TALIMATI.md                   /  404
+/OKU.md                                       /  404
+/PORTAL-KURULUM.md                            /  404
+/TESLIM-13-08-2026.md                         /  404
+/YETKI-BELGESI.md                             /  404
+/COPILOT-KOD-YAMALARI.md                      /  404
+
+# araçlar ve depo yapılandırması: 404
+/tools/*                                      /  404
+/.github/*                                    /  404
+/.env.example                                 /  404
+
+# tek sayfalık uygulama: bilinmeyen yol ana sayfaya düşer (EN SONDA KALMALI)
 /*  /index.html  200

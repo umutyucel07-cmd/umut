@@ -21,3 +21,4 @@ functions/api/*.KARANTINA
 
 # FUSE dosya sistemi artiklari - silinen ama acik kalan dosyalarin kopyasi
 .fuse_hidden*
+_site/
