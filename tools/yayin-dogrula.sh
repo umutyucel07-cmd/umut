@@ -54,8 +54,10 @@ YOLLAR=(
   /.env.example /.gitignore
   /.github/CODEOWNERS /.github/copilot-instructions.md
   /.github/workflows/imza-dogrulama.yml
+  # kimlik cekirdegi - functions/ derlenirken icine gomulur, YAYINLANMAZ
+  /lib/kimlik.js
   # fonksiyon kaynagi
-  /functions/api/kod-talebi.js /functions/api/webhook.js.KARANTINA
+  /functions/api/giris.js /functions/api/kod-talebi.js /functions/api/webhook.js.KARANTINA
   /functions/api/wa-webhook.js.KARANTINA
 )
 
@@ -94,13 +96,25 @@ for v in /styles.css /manifest.webmanifest /sw.js /icon-192.png /icon-512.png \
 done
 
 # ── Fonksiyon ucu hâlâ çalışıyor mu ─────────────────────────────────────────
-UC=$(curl -s --max-time 15 "$KOK/api/kod-talebi?$CB" || true)
-if printf '%s' "$UC" | grep -q '"service":"kod-talebi"'; then
-  echo "  ✅ /api/kod-talebi Function olarak çalışıyor"
-else
-  echo "  ❌ /api/kod-talebi JSON dönmüyor — Function kaydolmamış olabilir"
-  echo "     Gelen: $(printf '%s' "$UC" | head -c 80)"
+for u in kod-talebi giris; do
+  UC=$(curl -s --max-time 15 "$KOK/api/$u?$CB" || true)
+  if printf '%s' "$UC" | grep -q "\"service\":\"$u\""; then
+    echo "  ✅ /api/$u Function olarak çalışıyor"
+  else
+    echo "  ❌ /api/$u JSON dönmüyor — Function kaydolmamış olabilir"
+    echo "     Gelen: $(printf '%s' "$UC" | head -c 80)"
+    acik=$((acik+1))
+  fi
+done
+
+# Giris ucu ASLA muvekkil listesi dondurmemeli. Bos kod ile sorulur; yanitta
+# baska bir muvekkilin adi/telefonu gecmemeli.
+BOS=$(curl -s --max-time 15 -X POST -H 'content-type: application/json' -d '{"kod":""}' "$KOK/api/giris?$CB" || true)
+if printf '%s' "$BOS" | grep -qE '"(dosyalar|muvekkil)"'; then
+  echo "  ❌ /api/giris kodsuz istekte müvekkil verisi döndürdü"
   acik=$((acik+1))
+else
+  echo "  ✅ /api/giris kodsuz istekte veri döndürmüyor"
 fi
 
 if [ "$acik" -eq 0 ]; then echo "✅ Sızıntı yok, site sağlam."; exit 0; fi

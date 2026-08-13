@@ -124,6 +124,46 @@ done
 kontrol "acik ic belge"     "$KAPANMAMIS" 0 \
         "_redirects kaydi zorunlu ama TEK BASINA KORUMA DEGIL - Pages statik varligi once sunuyor. Gercek koruma: tools/yayin-hazirla.sh + Pages build cikti dizini"
 
+# ── MUVEKKIL LISTESI TARAYICIDA OLMAZ ───────────────────────────────────────
+# 13.08.2026 bulgusu: js/buro-bilgi.js icinde window.MUVEKKILLER dizisi vardi
+# ve js/oturum.js girilen erisim kodunu DOGRUDAN o diziyle karsilastiriyordu.
+# Dosya herkese acik yayinlanir. Icinde o gun yalniz iki ORNEK kayit vardi
+# (Elif Sahin, Murat Kaya - ikisi de buro kayitlarinda arandi, bulunamadi),
+# ama dosyanin kendi yorumu "yeni muvekkil eklemek icin bu listeye bir satir
+# yazin" diyordu. O satir yazilsaydi 472 muvekkilin adi, erisim kodu, telefon
+# son dordu ve dava gecmisi indirilebilir hale gelecekti.
+# Dogrulama /api/giris ucuna tasindi. Bu denetim geri gelmesini engeller.
+MVSATIR=0
+for j in js/*.js; do
+  [ -e "$j" ] || continue
+  # "window.MUVEKKILLER = [" satirinda hemen ardindan "]" gelmiyorsa dolu demektir
+  grep -o 'window\.MUVEKKILLER *= *\[.\{0,3\}' "$j" 2>/dev/null | grep -qv 'window\.MUVEKKILLER *= *\[\]' \
+    && { echo "  ⚠️  tarayiciya muvekkil kaydi gomulmus: $j"; MVSATIR=$((MVSATIR+1)); }
+done
+kontrol "tarayicida muvekkil"  "$MVSATIR" 0 \
+        "Dogrulama sunucuda (/api/giris). Bu dizi DOLU olursa muvekkil verisi herkese acik yayinlanir"
+
+# ── KIMLIK CEKIRDEGI YAYINLANMAZ ────────────────────────────────────────────
+# lib/kimlik.js biber ve ozet mantigini tasir. functions/ derlenirken icine
+# gomulur; yayin dizini beyaz listesinde YER ALMAMALIDIR.
+LIBACIK=0
+grep -qE '^\s*lib(/|$)' tools/yayin-hazirla.sh 2>/dev/null && LIBACIK=1
+kontrol "kimlik cekirdegi acik" "$LIBACIK" 0 \
+        "lib/ beyaz listeye eklenirse ozetleme mantigi ve anahtar semasi yayinlanir"
+
+# ── KIMLIK DENEMESI GECMELI ─────────────────────────────────────────────────
+# Muvekkil kimlik dogrulamasi canli bir yoldur; sozdizimi denetimi yetmez.
+if [ -f tools/kimlik-denemesi.sh ] && command -v node >/dev/null 2>&1; then
+  if bash tools/kimlik-denemesi.sh >/tmp/uy-kimlik-deneme.log 2>&1; then
+    kontrol "kimlik denemesi" 0 0 ""
+  else
+    echo "  ⚠️  kimlik denemesi DUSTU - ayrinti: /tmp/uy-kimlik-deneme.log"
+    tail -5 /tmp/uy-kimlik-deneme.log | sed 's/^/     /'
+    kontrol "kimlik denemesi" 1 0 \
+            "bash tools/kimlik-denemesi.sh calistirip duzeltin; giris yolu bozuk birakilamaz"
+  fi
+fi
+
 echo "────────────────────────────────────────────────────────────"
 if [ "$hata" -eq 1 ]; then
   cat <<'SON'

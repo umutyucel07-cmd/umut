@@ -41,49 +41,30 @@ window.BURO = {
 };
 
 // ---- Müvekkil erişim kayıtları ----
-// Her müvekkile bürodan verilen bir erişim kodu tanımlanır. Kod yalnız DOSYA DURUMU
-// bilgisini açar; belge, dilekçe ve yazışma bu kanaldan paylaşılmaz (KEP/WhatsApp kullanılır).
-// Yeni müvekkil eklemek için bu listeye bir satır yazıp siteyi yeniden derlemek yeterlidir.
-window.MUVEKKILLER = [{
-  kod: 'UY-4182',
-  telSon4: '2341',
-  ad: 'Elif Şahin',
-  sicil: 'MV-2026-0184',
-  dosyalar: [{
-    id: 1,
-    title: 'Kıdem Tazminatı Davası',
-    fileNo: '2025/418 E.',
-    court: 'Antalya 3. İş Mahkemesi',
-    status: 'hearing',
-    nextDate: '14 Nisan 2026, 09:40',
-    progress: 62,
-    akis: [['gavel', 'Duruşma günü verildi', '14 Nisan 2026, 09:40', 'pending', 'Duruşma, Antalya 3. İş Mahkemesi 2 numaralı salonda yapılacaktır. Katılımınız zorunlu değildir; tarafımızca temsil edilmektesiniz.'], ['file-text', 'Bilirkişi raporu dosyaya sunuldu', '28 Mart 2026', 'info', 'Rapor tarafınız lehine değerlendirmeler içermektedir. Rapora karşı beyan süresi takip edilmektedir.'], ['upload', 'Cevaba cevap dilekçesi sunuldu', '11 Mart 2026', 'info', 'Dilekçe, Ulusal Yargı Ağı Bilişim Sistemi üzerinden süresi içinde ibraz edilmiştir.'], ['check-circle-2', 'Dava açıldı', '2 Şubat 2026', 'success', 'Harç ve gider avansı yatırılmış, dosya tevzi edilmiştir.']]
-  }, {
-    id: 2,
-    title: 'Kira Tespit Davası',
-    fileNo: '2025/1120 E.',
-    court: 'Antalya 8. Sulh Hukuk Mahkemesi',
-    status: 'active',
-    nextDate: '2 Mayıs 2026, 11:00',
-    progress: 35,
-    akis: [['calendar-days', 'Ön inceleme duruşması belirlendi', '2 Mayıs 2026, 11:00', 'pending', 'Ön inceleme aşamasında tarafların iddia ve savunmaları tespit edilecektir.'], ['check-circle-2', 'Dava açıldı', '18 Şubat 2026', 'success', 'Emsal kira bedeli araştırması için bilirkişi incelemesi talep edilmiştir.']]
-  }]
-}, {
-  kod: 'UY-7735',
-  telSon4: '7788',
-  ad: 'Murat Kaya',
-  sicil: 'MV-2026-0207',
-  dosyalar: [{
-    id: 1,
-    title: 'İtirazın İptali Davası',
-    fileNo: '2026/77 E.',
-    court: 'Antalya 5. Asliye Hukuk Mahkemesi',
-    status: 'active',
-    nextDate: '19 Mayıs 2026, 10:20',
-    progress: 28,
-    akis: [['calendar-days', 'Duruşma günü belirlendi', '19 Mayıs 2026, 10:20', 'pending', 'Tensip zaptı düzenlenmiş, taraflara tebligat çıkarılmıştır.'], ['check-circle-2', 'Dava açıldı', '6 Mart 2026', 'success', 'İcra takibine vaki itirazın iptali istemiyle dava ikame edilmiştir.']]
-  }]
-}];
+//
+//  ⛔ BURAYA MÜVEKKİL YAZILMAZ.  13.08.2026'da kaldırıldı.
+//
+//  Bu dosya HERKESE AÇIK yayınlanır (js/buro-bilgi.js). Eskiden burada
+//  window.MUVEKKILLER dizisi vardı ve js/oturum.js girilen erişim kodunu
+//  DOĞRUDAN bu diziyle karşılaştırıyordu. Dosyanın kendi yorumu da
+//  "yeni müvekkil eklemek için bu listeye bir satır yazıp siteyi yeniden
+//  derlemek yeterlidir" diyordu.
+//
+//  O satır yazıldığı an 472 müvekkilin adı, erişim kodu, telefon son dördü,
+//  sicil numarası ve dava geçmişi herkesin indirebileceği bir dosyaya
+//  girecekti. Kaldırıldığında listede yalnız iki ÖRNEK kayıt vardı
+//  (Elif Şahin · Murat Kaya); ikisi de büro kayıtlarında arandı, bulunamadı.
+//  Yani fiilî bir sızıntı doğmadı — kurulmuş ama patlamamış bir tuzaktı.
+//
+//  YENİ DÜZEN: doğrulama sunucuda.
+//    · /api/giris        — kodu doğrular, YALNIZ o müvekkilin kaydını döner
+//    · /api/kod-talebi   — ad+telefon eşleştirir, YENİ kod üretip gönderir
+//    · Müvekkil kayıtları Cloudflare KV'de, biberli özet anahtarlarla durur
+//    · Yükleme aracı: tools/muvekkil-yukle.js (düz metin bilgisayarınızdan çıkmaz)
+//
+//  Boş dizi, eski çağıranların (js/portal.js) çökmemesi için bırakıldı.
+//  tools/index-denetle.sh bu dizinin boş kalmasını her commit'te sınar.
+window.MUVEKKILLER = [];
 
 // ---- Ölçüm ----
 // Cloudflare tarafında çalışan izleme, kaynak dosyada doğrudan eklenmez.
