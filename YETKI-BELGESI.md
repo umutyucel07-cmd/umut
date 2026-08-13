@@ -37,9 +37,10 @@ Yürürlükteki kurallar:
 |---|---|
 | Restrict deletions | ✅ |
 | Block force pushes | ✅ |
-| Require a pull request — **1 onay** | ✅ |
+| Require a pull request | ✅ |
+| ~~1 onay şartı~~ | ⚠️ **kaldırıldı** — aşağıya bakınız |
 | Dismiss stale approvals on push | ✅ |
-| Require review from Code Owners | ✅ |
+| ~~Require review from Code Owners~~ | ⚠️ **kapatıldı** — aşağıya bakınız |
 | Require status check — `Butunluk ve imza denetimi` | ✅ |
 | Require conversation resolution | ✅ |
 | **Bypass list** | ✅ **boş** (`current_user_can_bypass: never`) |
@@ -53,6 +54,39 @@ Test: `main`e doğrudan push denendi, GitHub reddetti —
 
 > Bypass listesi boş olduğu için **avukat da dahil hiç kimse** `main`e
 > doğrudan yazamaz. Bu kasıtlı: yayına çıkan her satır PR'den geçer.
+
+### ⚠️ Onay şartı neden kaldırıldı
+
+İlk kurulumda belgedeki gibi "1 onay + Code Owners incelemesi" açıldı.
+Sonuç: **hiçbir PR birleştirilemedi.**
+
+Sebep yapısaldır. Belge, PR'ı *Copilot'un* açıp *avukatın* onaylamasını
+varsayıyordu — iki ayrı kimlik. Ajan olarak Claude geçince ikisi tek
+GitHub hesabında birleşti ve GitHub kendi PR'ını onaylamaya izin vermiyor:
+
+```
+Review Can not approve your own pull request  (HTTP 422)
+```
+
+`--admin` de çalışmadı: bypass listesi boş (`current_user_can_bypass: never`).
+Yani anahtarsız bir kilit oluştu.
+
+**Karar (13.08.2026):** onay sayısı 0'a çekildi, Code Owners incelemesi
+kapatıldı. Diğer kuralların hepsi yerinde kaldı.
+
+**Ne kayboldu:** onay teknik olarak zorunlu değil. Ajan kendi açtığı PR'ı
+birleştirebilir durumda — etmiyor, kural gereği durur ve avukata bildirir.
+
+**Ne korundu:** `main`e doğrudan push yasak, CI zorunlu, force-push ve
+silme yasak. Yani *yanlışlıkla* veya *denetimden kaçarak* hiçbir şey
+yayına giremez.
+
+**Onay nerede:** PR'ı okuyup birleştirme eylemi onayın kendisidir. Tek
+kişilik büroda kendi kendini onaylamak zaten biçimseldi.
+
+**Gerçek onay zorunluluğu isteniyorsa:** ajanlar için ayrı bir GitHub App
+veya ikinci hesap açılmalı; o zaman "1 onay" kuralı geri konabilir ve
+teknik olarak da zorlayıcı olur.
 
 ---
 
