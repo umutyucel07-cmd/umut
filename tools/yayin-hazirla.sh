@@ -56,6 +56,11 @@ DOSYALAR=(
   _redirects
   robots.txt
   sitemap.xml
+  styles.css
+  apple-touch-icon.png
+  icon-192.png
+  icon-512.png
+  icon-maskable-512.png
 )
 DIZINLER=(
   js
@@ -77,6 +82,45 @@ find "$CIKTI" -type f \( \
       -name '*.KARANTINA' -o -name '*.yedek-*' -o -name '*.oncesi-*' \
    -o -name '*.eski-*'    -o -name '*.orijinal-*' -o -name '*.gomulu-*' \
    -o -name '*.jsx'       -o -name '*.map' \) -delete 2>/dev/null || true
+
+# ── Bağımlılık denetimi ─────────────────────────────────────────────────────
+#  13.08.2026: beyaz liste ilk yazıldığında styles.css ve dört PWA ikonu
+#  ATLANMIŞTI. Ayar o hâliyle yapılsaydı site stilsiz açılacak, PWA kurulumu
+#  ve sw.js önbelleği bozulacaktı. Beyaz liste elle tutulan bir listedir ve
+#  elle tutulan her liste eskir. Bu yüzden liste artık DENETLENİYOR:
+#  index.html ve manifest neyi istiyorsa yayın dizininde bulunmak ZORUNDA.
+if command -v python3 >/dev/null 2>&1; then
+  python3 - "$CIKTI" <<'PYEOF' || hata=1
+import io, json, os, re, sys
+cikti = sys.argv[1]
+istenen = set()
+try:
+    h = io.open(os.path.join(cikti, "index.html"), encoding="utf-8").read()
+    for m in re.finditer(r'(?:src|href)="([^"]+)"', h):
+        y = m.group(1)
+        if y.startswith(("http://", "https://", "#", "data:", "mailto:", "tel:")):
+            continue
+        istenen.add(y.lstrip("./").lstrip("/"))
+except Exception as e:
+    print("  ❌ index.html okunamadı:", e); sys.exit(1)
+try:
+    d = json.load(io.open(os.path.join(cikti, "manifest.webmanifest"), encoding="utf-8"))
+    for i in d.get("icons", []):
+        istenen.add(str(i.get("src", "")).lstrip("./").lstrip("/"))
+except Exception:
+    pass
+eksik = [y for y in sorted(istenen) if y and not os.path.exists(os.path.join(cikti, y))]
+if eksik:
+    print("  ❌ yayın dizininde EKSİK — site bozulur:")
+    for y in eksik:
+        print("       ", y)
+    print("     Bu dosyaları DOSYALAR/DIZINLER beyaz listesine ekleyin.")
+    sys.exit(1)
+print(f"  ✓ bağımlılık denetimi: {len(istenen)} yolun tamamı yayın dizininde")
+PYEOF
+else
+  echo "  ⚠️  python3 yok — bağımlılık denetimi atlandı"
+fi
 
 # ── Doğrulama: sızıntı var mı ───────────────────────────────────────────────
 hata=0
