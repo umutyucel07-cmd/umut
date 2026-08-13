@@ -22,3 +22,30 @@ functions/api/*.KARANTINA
 # FUSE dosya sistemi artiklari - silinen ama acik kalan dosyalarin kopyasi
 .fuse_hidden*
 _site/
+
+# ---- MUVEKKIL VE HASSAS VERI — asla commit edilmez ----
+# Bu depo PUBLIC. Asagidaki kaliplarin hicbiri buraya girmemeli.
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+*.db
+muvekkiller.json
+portal_*.json
+buro_ozet.json
+otomatik_cevap.json
+*PORTFOY*.xlsx
+*MUVEKKIL*.xlsx
+*.udf
+00_KAPAK.md
+DOSYALAR/
+Sohbetler/
+_Veri/
+uyap_ham/
+*.env
+.env*
+!.env.example
+secrets*
+*_gizli*
+*.pem
+*.key
+*.p12
