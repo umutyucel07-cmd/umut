@@ -51,13 +51,19 @@ export async function onRequest({ request, env }) {
 
   const ip = request.headers.get('CF-Connecting-IP') || 'bilinmiyor';
 
-  // İki kademeli fren: dakikada 8, saatte 40. Kod uzayı 32^8 olduğu için bu
-  // fren kaba kuvvet saldırısını matematiksel olarak imkânsız kılar.
-  if (await frenAsildiMi(env.KOD_KV, `gfr:d:${ip}`, 8, 60)) {
+  // İki kademeli fren: 5 dakikada 10, saatte 40.
+  //
+  // KISA PENCERE NEDEN 60 SANİYE DEĞİL: 13.08.2026'da canlıda ölçüldü —
+  // eski kod `expirationTtl: 60` ile sayaç tutuyordu ve fren HİÇ devreye
+  // girmiyordu. Sebep: KV yazımının küresel okunur hale gelmesi ~60 saniye
+  // sürüyor; anahtar okunabilir olmadan önce zaten sona eriyordu. Yani
+  // 60 saniyelik bir KV sayacı fiilen ölü koddur.
+  // Pencere, yayılma süresinden belirgin biçimde UZUN olmalı.
+  if (await frenAsildiMi(env.KOD_KV, `gfr:d:${ip}`, 10, 300)) {
     return json({
       ok: false,
       durum: 'kilit',
-      mesaj: 'Çok sayıda deneme yapıldı. Lütfen bir dakika sonra yeniden deneyiniz.',
+      mesaj: 'Çok sayıda deneme yapıldı. Lütfen birkaç dakika sonra yeniden deneyiniz.',
     }, 429);
   }
   if (await frenAsildiMi(env.KOD_KV, `gfr:s:${ip}`, 40, 3600)) {
