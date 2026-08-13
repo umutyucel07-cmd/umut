@@ -142,35 +142,48 @@ export async function onRequest({ request, env }) {
     'avumutyucelhukuk.com → Müvekkil Girişi bölümünden giriş yapabilirsiniz. ' +
     'Bu kod önceki kodunuzun yerine geçer. Kodu kimseyle paylaşmayınız. — Umut Yücel Hukuk Bürosu';
 
-  // fetch YANIT DÖNMEDEN de ölebilir (ağ hatası, geçersiz başlık karakteri).
-  // Yakalanmazsa sonuç 1101'dir: müvekkile hiçbir şey söylenmez, kuyruğa
-  // hiçbir iz düşmez — 13.08'de tam bu yaşandı. Artık her iki ölüm biçimi de
-  // aynı kapıdan çıkar: kuyruk kaydı + dürüst "gönderilemedi" yanıtı.
+  // fetch YANIT DÖNMEDEN de ölebilir (ağ hatası). 13.08 canlı ölçümü:
+  // jeton süzülmüş, numara kimliği temizken bile Meta'nın ucu isteği TCP
+  // düzeyinde kesti ("Network connection lost."). Bilinen etken: Meta'nın
+  // sınır sunucusu User-Agent'sız istekleri ara ara robot sayıp düşürüyor.
+  // Çare iki katlı: gerçek bir User-Agent + kısa aralıklı TEK yeniden deneme.
+  // İkisi de düşerse kuyruk kaydı + dürüst "gönderilemedi" yanıtı.
+  const gonderimIstek = () => fetch(`https://graph.facebook.com/v20.0/${phoneId}/messages`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+      'User-Agent': 'uy-portal/1.0 (+https://avumutyucelhukuk.com)',
+      Accept: 'application/json',
+    },
+    body: JSON.stringify({
+      messaging_product: 'whatsapp',
+      to: hedef,
+      type: 'text',
+      text: { body: metin },
+    }),
+  });
   let yanit;
   try {
-    yanit = await fetch(`https://graph.facebook.com/v20.0/${phoneId}/messages`, {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        messaging_product: 'whatsapp',
-        to: hedef,
-        type: 'text',
-        text: { body: metin },
-      }),
-    });
-  } catch (aghata) {
-    // 502 DÖNMÜYORUZ: Cloudflare, 502 durum kodlu yanıtın gövdesini kendi
-    // "error code: 502" sayfasıyla değiştiriyor (13.08 gecesi canlıda ölçüldü;
-    // JSON kayboldu, ekran gerçek sebebi hiç göremedi). 200 + durum:'hata'
-    // hem gerçek mesajı ekrana taşır hem ön yüz sözleşmesini korur.
-    const detay = `fetch: ${String((aghata && aghata.message) || aghata).slice(0, 200)}`;
-    await talebiKuyruklaGuvenli(env.KOD_KV, muvekkil, tel, 'gonderim-hatasi', detay);
-    return json({
-      ok: false,
-      durum: 'hata',
-      mesaj: 'Kodunuz şu anda gönderilemedi; talebiniz not edildi. Büromuz kodu en kısa sürede iletecektir.',
-      detay,
-    });
+    yanit = await gonderimIstek();
+  } catch (ilkKopus) {
+    try {
+      await new Promise((coz) => setTimeout(coz, 400));
+      yanit = await gonderimIstek();
+    } catch (aghata) {
+      // 502 DÖNMÜYORUZ: Cloudflare, 502 durum kodlu yanıtın gövdesini kendi
+      // "error code: 502" sayfasıyla değiştiriyor (13.08 gecesi canlıda
+      // ölçüldü; JSON kayboldu, ekran gerçek sebebi hiç göremedi).
+      // 200 + durum:'hata' gerçek mesajı ekrana taşır.
+      const detay = `fetch: ${String((aghata && aghata.message) || aghata).slice(0, 200)}`;
+      await talebiKuyruklaGuvenli(env.KOD_KV, muvekkil, tel, 'gonderim-hatasi', detay);
+      return json({
+        ok: false,
+        durum: 'hata',
+        mesaj: 'Kodunuz şu anda gönderilemedi; talebiniz not edildi. Büromuz kodu en kısa sürede iletecektir.',
+        detay,
+      });
+    }
   }
 
   // SIRA KRİTİK: önce GÖNDER, sonra eskiyi geçersiz kıl. Ters sırada
