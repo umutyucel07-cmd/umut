@@ -1,0 +1,119 @@
+name: imza-dogrulama
+
+# Her PR'de calisir. Yerel pre-commit/pre-push kapisinin denetimlerini
+# sunucuda tekrarlar: kapi atlanarak (--no-verify) acilan bir PR de
+# buradan gecemez.
+#
+# IKI KADEME:
+#   1. KESIN denetimler  -> bulgu varsa is DUSER, PR birlesemez.
+#      (makine ile kesin karar verilebilen seyler)
+#   2. UYARI taramasi    -> bulgu varsa yalniz not duser, is DUSMEZ.
+#      (reklam yasagi degerlendirmesi hukukidir; makine karar veremez.
+#       "barodan ucretsiz mudafi" bir CMK aciklamasidir, reklam degildir.)
+
+on:
+  pull_request:
+    branches: [main]
+  # 13.08.2026 EKLENDI: bu depoda is DOGRUDAN PUSH ile yuruyor, PR
+  # acilmiyor. Yalniz pull_request tetikleyicisi birakilirsa sunucu
+  # tarafindaki kapi FIILEN HIC CALISMAZ - yerel kancayi --no-verify ile
+  # atlayan bir push dogruca canliya gider. Asil acik buydu.
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  denetim:
+    name: Butunluk ve imza denetimi
+    runs-on: ubuntu-latest
+    steps:
+      - name: Depoyu al
+        uses: actions/checkout@v4
+
+      - name: Node kur
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # ── KADEME 1: kesin denetimler (bulgu = is duser) ──────────────
+
+      - name: index.html butunluk denetimi
+        run: |
+          if [ -f tools/index-denetle.sh ]; then
+            bash tools/index-denetle.sh
+          else
+            echo "::warning::tools/index-denetle.sh yok - adim atlandi"
+          fi
+
+      - name: Kunye tutarlilik denetimi
+        run: |
+          if [ -f tools/kunye-denetle.sh ]; then
+            ZORUNLU=1 bash tools/kunye-denetle.sh
+          else
+            echo "::warning::tools/kunye-denetle.sh yok - adim atlandi"
+          fi
+
+      - name: Yapisal butunluk
+        run: |
+          HATA=0
+
+          if ! grep -q '"@type"[[:space:]]*:[[:space:]]*"Person"' index.html; then
+            echo "::error file=index.html::Person JSON-LD bulunamadi. Bu blok silinmez."
+            HATA=1
+          fi
+
+          if ! grep -qi "<noscript" index.html; then
+            echo "::error file=index.html::noscript kunye blogu bulunamadi. Bu blok silinmez."
+            HATA=1
+          fi
+
+          if grep -InE "(unpkg\.com|cdn\.jsdelivr|cloudflareinsights|googletagmanager|google-analytics|fonts\.googleapis)" index.html; then
+            echo "::error file=index.html::Yeni dis origin eklenmis. Depo kurali: dis origin eklenmez."
+            HATA=1
+          fi
+
+          if [ -f js/buro-bilgi.js ] && grep -InE "(<script|^\s*import\s|require\()" js/buro-bilgi.js; then
+            echo "::error file=js/buro-bilgi.js::Kunye kaynak dosyasinda harici script/import var."
+            HATA=1
+          fi
+
+          [ "$HATA" -eq 0 ] && echo "Yapisal butunluk tamam."
+          exit $HATA
+
+      # ── KADEME 2: uyari taramasi (bulgu = not duser, is DUSMEZ) ────
+      #
+      # Neden dusurmuyor: reklam yasagi degerlendirmesi hukukidir.
+      # Sitede "ucret" kelimesi mesru yerlerde geciyor — KVKK aydinlatma
+      # tablosu, kidem tazminati makalesi, AAUT tarife sayfasi, portal
+      # odeme kayitlari. "Barodan ucretsiz mudafi" bir CMK aciklamasidir.
+      # Bunlari makine ayirt edemez. Surekli kirmizi yanan bir denetim
+      # ise ogrenilmis korlugue yol acar; karari avukat verir.
+
+      - name: Reklam yasagi uyari taramasi
+        continue-on-error: true
+        run: |
+          DESEN='(\bücretsiz (danışma|görüşme|ön görüşme|hizmet)|'
+          DESEN+='\bilk görüşme ücretsiz|ücret alınmaz|\bbedelsiz danışma|'
+          DESEN+='\ben uygun fiyat|\buygun fiyat|\ben iyi avukat|'
+          DESEN+='\ben başarılı avukat|başarı garanti|\bgarantili sonuç|'
+          DESEN+='kazandırırız|davanızı kazan|mutlaka kazan|kampanyamız|'
+          DESEN+='\bhemen arayın|\bşimdi arayın|\bteklif alın)'
+
+          BULGU=$(grep -rInE "$DESEN" --include="*.html" \
+            --include="*.webmanifest" --include="*.js" \
+            index.html manifest.webmanifest js/ 2>/dev/null | head -20)
+
+          if [ -n "$BULGU" ]; then
+            echo "$BULGU" | cut -c1-200
+            echo "::warning::Tanitim amacli ucret/is cagrisi adayi bulundu. Hukuki degerlendirme gerekir; is bu yuzden dusurulmedi."
+          else
+            echo "Uyari taramasi temiz."
+          fi
+
+      - name: Sonuc
+        run: |
+          echo "Kesin denetimler gecti."
+          echo "Uyari varsa yukaridaki adima bakin; karar avukatindir."
