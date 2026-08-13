@@ -14,7 +14,30 @@
 #  Sızmayan: ERISIM_TOKEN hiçbir yayınlanan belgede geçmiyor (doğrulandı).
 #  .env.example değerleri de boş.
 #
-#  KALICI ÇÖZÜM (Copilot): belgeleri yayın kökünden çıkarın — ya nokta ile
+#  ⛔ 13.08.2026 — BU 404 KURALLARI ETKİSİZ. ÖLÇÜLDÜ.
+#
+#  Cloudflare Pages, bir isteği karşılarken ÖNCE statik varlığa bakar;
+#  _redirects yalnız hiçbir dosyaya karşılık gelmeyen yollar için çalışır.
+#  Belgeler dağıtımda GERÇEKTEN var olduğu için Pages onları doğrudan sunuyor
+#  ve bu kuralları hiç okumuyor. Birleşme sonrası 13/13 belge hâlâ 200 döndü.
+#
+#  Yönlendirme, var olan bir dosyanın üzerini ÖRTEMEZ. Yanlış varsayım bendeydi.
+#
+#  ÇALIŞAN İKİNCİ KATMAN: _headers içindeki X-Robots-Tag. Doğrulandı —
+#  .md ve tools/ yollarında "noindex, nofollow, noarchive" başlığı geliyor.
+#  Yani belgeler erişilebilir ama arama motoruna GİRMEZ.
+#
+#  TEK GERÇEK ÇÖZÜM: dosyaları yayın dizinine hiç koymamak.
+#  tools/yayin-hazirla.sh bunu yapıyor ve yerelde denendi. Cloudflare'de
+#  iki alan doldurulunca devreye girer:
+#      Build command          : bash tools/yayin-hazirla.sh
+#      Build output directory : _site
+#
+#  Aşağıdaki kurallar SİLİNMİYOR: yayın dizini ayarı yapıldıktan sonra o
+#  dosyalar dağıtımda bulunmayacağı için kurallar gerçekten devreye girer
+#  ve ikinci savunma hattı olur.
+#
+#  ESKİ NOT (kalıcı çözüm) — ya nokta ile
 #  başlayan bir klasöre taşıyın ya da Pages projesinde ayrı bir build çıktı
 #  dizini tanımlayın. Aşağıdaki kurallar o yapılana kadar geçerli KAPAKTIR.
 #

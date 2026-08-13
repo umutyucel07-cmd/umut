@@ -208,7 +208,16 @@ kaldırılmazsa da davranış dürüsttür.
 
 ---
 
-## YAMA 5 — Belgeleri yayın kökünden çıkarma (KALICI ÇÖZÜM)
+## YAMA 5 — Belgeleri yayın kökünden çıkarma (**ARTIK ZORUNLU**)
+
+> ⛔ **13.08.2026 ölçümü: `_redirects` yaklaşımı ÇALIŞMIYOR.** Birleşme ve dağıtımdan
+> sonra 13/13 belge hâlâ `200` döndü. Sebep: **Cloudflare Pages önce statik varlığa
+> bakar**; yönlendirme var olan bir dosyanın üzerini örtemez. Yanlış varsayım bendeydi.
+>
+> **Çalışan kısım:** `_headers` içindeki `X-Robots-Tag: noindex, nofollow, noarchive`
+> doğrulandı — belgeler erişilebilir ama **arama motoruna girmez**.
+>
+> **Bu yama artık isteğe bağlı değil; sızıntıyı kapatan tek şey bu.**
 
 `tools/yayin-hazirla.sh` yazıldı ve **yerelde denendi**: 56 dosya, 1,7 MB, sızıntı yok.
 
