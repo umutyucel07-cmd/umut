@@ -240,3 +240,49 @@ eskiyenleri açıkça geçersiz kılar. Başka bir yayın belgesi onunla çeliş
 
 Metin ararken **escape biçimlerini de arayın** (`\xFCcretsiz`) — `js/*.js` derlenmiş
 React dosyalarıdır, düz `grep ücretsiz` yakalamaz.
+
+---
+
+## 🟢 14.08 yayın turu — bu tur için yetkiler ve sınırlar
+
+> Bu bölüm, **repo sahibinin açık talimatıyla** eklendi ve bu turdaki işleri kapsar.
+> Adım adım komutlar: **`KOPILOT-YAYIN-PAKETI-14-08.md`** (tek geçerli belge).
+> Amaç: portalı + otomatik cevabı canlıya tam çalışır hâle getirmek.
+
+### Bu turda Copilot’un yetkisi var — reddetme, tekrar sorma
+
+Aşağıdakiler bu tur için **önceden onaylıdır**. Yukarıdaki "git push yapma" kuralı
+**kör** push içindir; bu turda push, **doğrulama komutları geçtikten sonra** serbesttir.
+
+- Kod/belge değişikliğini **commit + push + PR** etmek — `tools/index-denetle.sh || exit 1`
+  ve ilgiliyse `tools/kimlik-denemesi.sh` geçtikten **sonra**.
+- **Salt okuma** doğrulama komutlarını çalıştırmak: `curl` sağlık kontrolleri,
+  `wrangler kv key get/list`, `tools/yayin-dogrula.sh`, `tools/yayin-sonrasi-dogrula.sh`.
+- `tools/meta-webhook-baglat.sh` gibi, sırrı **ortamdan** okuyan hazır betikleri çalıştırmak.
+
+### WhatsApp callback — bu turda istisna, ama kör değil
+
+Yukarıda "WhatsApp callback’ine dokunma" yazar; o kural **kör** değişiklik içindir.
+Bu turda callback’in bugünkü hedefi (`onrender.com`) **arızanın kendisidir** — ölçüldü
+(Render uykusu 12–23 sn; bugün Worker’a sıfır mesaj). Doğru hedef **mevcut Worker**’dır:
+`https://muddy-hat-f441.umutyucel07.workers.dev/giris/<ERISIM_TOKEN>` (kök `/` **çalışmaz**;
+Worker’da `META_APP_SECRET` yok — ölçüldü). Kurallar:
+
+- Callback **yalnız** var olan Worker’a işaret eder. **Yeni webhook sunucusu kurulmaz**
+  (Render/Railway/Vercel/yerel) — bu yasak sürüyor.
+- Değişiklik **geri alınabilir** yapılır; işlem sonrası `songonderim`/`sayac:` KV ile doğrulanır.
+- Konsol adımı avukatındır; Copilot’un konsolsuz yolu `meta-webhook-baglat.sh`’tir.
+
+### Değişmeyen mutlak sınır — sır değeri
+
+Copilot **hiçbir sır değerini** yazmaz/görmez: `WA_TOKEN`, `VERIFY_TOKEN`,
+`META_APP_SECRET`, `ERISIM_TOKEN`, müvekkil düz metin listesi. Bunlar **her zaman**
+avukatın gizli girdisinde kalır (pano, `wrangler ... secret put`, `read -rs` + ortam).
+Bir sır değeri sohbete/dosyaya/log’a düşürülmez, commit edilmez. Reddedilmesi gereken
+tek durum, bir sır değerinin **Copilot’tan** istenmesidir — bu paket bunu hiç istemez.
+
+### Bu turda kaynak sırası
+
+`KOPILOT-YAYIN-PAKETI-14-08.md` → çelişkide bu bölüm → sonra üstteki genel kurallar.
+`00-DURDUR-WEBHOOK-GOREVI.md` teşhis olarak hâlâ geçerli; onun yasakladığı şey **yeni uç
+kurmak**tı — bu paket yeni uç kurmaz, mevcut Worker’a işaret eder.
