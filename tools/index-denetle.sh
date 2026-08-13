@@ -122,7 +122,7 @@ for m in *.md; do
   grep -qF "/$m" _redirects 2>/dev/null || { echo "  ⚠️  _redirects'te kapatilmamis belge: $m"; KAPANMAMIS=$((KAPANMAMIS+1)); }
 done
 kontrol "acik ic belge"     "$KAPANMAMIS" 0 \
-        "Her kok .md dosyasi _redirects icinde 404 almali (Yon. m.7/d kapali liste)"
+        "_redirects kaydi zorunlu ama TEK BASINA KORUMA DEGIL - Pages statik varligi once sunuyor. Gercek koruma: tools/yayin-hazirla.sh + Pages build cikti dizini"
 
 echo "────────────────────────────────────────────────────────────"
 if [ "$hata" -eq 1 ]; then
