@@ -25,7 +25,26 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 CIKTI="_site"
-rm -rf "$CIKTI"
+
+# Temizlik BİLEREK katı: eski bir çıktı dizini kalırsa artık yayınlanmaması
+# gereken dosyalar yeni derlemeye sızabilir. Silinemiyorsa derleme DURUR.
+if [ -e "$CIKTI" ] && ! rm -rf "$CIKTI" 2>/dev/null; then
+  cat >&2 <<'SON'
+❌ Eski _site dizini silinemedi — derleme durduruldu.
+
+Bu, Cloudflare derleme sunucusunda OLMAZ; orada her derleme temiz bir
+kopyayla başlar. Bu hatayı yerelde görüyorsanız muhtemel sebep: Cowork
+köprüsündeki bağlı klasör "unlink" işlemine izin vermiyor.
+
+Yerelde denemek isterseniz depoyu köprü dışında bir yere klonlayın, ya da
+_site dizinini elle silin.
+
+Derleme kasten durduruldu: yarım temizlenmiş bir dizinle devam etmek, eski
+bir belgenin sessizce yayına çıkması demektir. Sızıntıyı kapatmak için
+yazılmış bir scriptin yapabileceği en kötü şey budur.
+SON
+  exit 1
+fi
 mkdir -p "$CIKTI"
 
 # ── Yayınlanacaklar — BEYAZ LİSTE. Burada olmayan hiçbir şey yayınlanmaz. ──
