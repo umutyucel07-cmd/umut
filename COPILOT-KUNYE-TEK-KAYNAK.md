@@ -258,3 +258,38 @@ Copilot'un da benim de erişimimiz yok; ikisi de sizin elinizde:
 - `defer` ve `noscript` **kaldırılmayacak** — ikisi de site indekslensin diye var
 - Künye alanlarının **değerleri** değiştirilmeyecek; bu görev yalnız *nereden okunduğunu* değiştirir
 - Şüphede kalırsan uygulama, sor. Bu depo canlı siteyi besliyor
+
+
+---
+
+## Kapanış notu — 13.08.2026 03:48
+
+### Şu ana kadar yapılanlar
+- `js/buro-bilgi.js` Node'dan okunabilir hale getirildi; `module.exports` eklendi.
+- `tools/kunye-bas.js` üretim scripti kuruldu ve `--uygula` / tarama modu verildi.
+- `tools/kunye-denetle.sh` guard çalışır durumda tutuldu.
+- `index.html`, `manifest.webmanifest`, `js/buro.js`, `functions/api/kod-talebi.js` ve `sw.js` için sabit künye alanları tarandı.
+- `tools/index-denetle.sh` birden çok kez çalıştırıldı; mevcut site bütünlük kontrolü geçti.
+
+### Kısmi sonuç
+- Kaynak artık tek noktadan okunabiliyor.
+- Ancak çıktı dosyalarında sabit künye hâlâ bulunuyor; template/çıktı ayrımı tamamlanmadı.
+- Bu yüzden iş, hedeflenen “tam tek-kaynak” seviyesinde bitmiş sayılmaz.
+
+### Claude'a bırakılan talimat
+1. `index.html`, `manifest.webmanifest`, `js/buro.js`, `functions/api/kod-talebi.js`, `functions/api/webhook.js` ve gerekiyorsa `sw.js` içinde künye alanlarını `{{BURO}}` / `{{AD}}` işaretçilerine çevir.
+2. `tools/kunye-bas.js` ile bu işaretçileri üretim anında doldur.
+3. `tools/kunye-denetle.sh` ile `js/buro-bilgi.js` dışındaki sabit yazımı sıfıra indir.
+4. Ardından `tools/index-denetle.sh` ile yayın güvenliğini tekrar doğrula.
+5. Değişiklikleri commit + push etmeden önce `node -e "console.log(require('./js/buro-bilgi.js').buro)"` kontrolünü tekrar çalıştır.
+
+### Müvekkil eşleştirme için çıkan güvenli satırlar
+- 2025/54 → Behiye Kök
+- 2026/217 → Eda Hanım
+- 2025/571 → Mustafa Laik
+- 2025/578 → Tuğrul Gökhan Yıldız
+- 2024/203 → Samet Kocagöz
+- 2026/572 → Berke Tarıkcı (olası)
+- 2025/410 → Onur (olası)
+- 2025/358 → Ramazan Bey (olası)
+- 2026/179 → Ayşe Gültekin (olası)

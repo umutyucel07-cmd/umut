@@ -1,74 +1,44 @@
 #!/usr/bin/env bash
 # ============================================================================
-#  kunye-denetle.sh — künye tek kaynakta mı denetimi
-#  Av. Umut Yücel · 12.08.2026 (düzeltilmiş sürüm)
+#  kunye-denetle.sh — künye tutarlılık denetimi
+#  Av. Umut Yücel · 13.08.2026 (yeniden yazıldı — ZORUNLU MODA ALINDI)
 #
-#  AMAÇ: Büro unvanı yalnız js/buro-bilgi.js içinde bulunsun; diğer dosyalarda
-#  {{BURO}} işaretçisi kullanılsın. Baro teyidi geldiğinde tek yerden değişsin.
+#  ESKİ HEDEF (terk edildi): "künye yalnız js/buro-bilgi.js'te dursun, diğer
+#  dosyalarda {{BURO}} işaretçisi olsun". Bu hedef statik bir sitede
+#  ULAŞILAMAZ: index.html'in <title> ve <noscript> blokları ile
+#  manifest.webmanifest ve sw.js, JavaScript ÇALIŞMADAN okunur. Googlebot
+#  künyeyi orada görür. İşaretçi bırakılırsa dizine "{{BURO}}" girer.
 #
-#  ⚠️ ŞU AN UYARI MODUNDA — commit'i ENGELLEMEZ.
-#  Sebep: refaktör (COPILOT-KUNYE-TEK-KAYNAK.md Adım 1) henüz yapılmadı; künye
-#  hâlâ 8 dosyada sabit. Bu hâlde engelleyici çalışırsa HER commit durur,
-#  herkes `--no-verify` alışkanlığı edinir ve asıl kritik olan index.html
-#  guard'ı da devre dışı kalır. Refaktör bitince ZORUNLU=1 yapın.
+#  Şablon+çıktı ayrımı da denendi ve reddedildi: bu depo üç kez, birinin eski
+#  bir index.html kopyasını üzerine yazmasıyla bozuldu. Kaynak/çıktı ikiliği
+#  o hatanın dördüncüsünü davet eder.
+#
+#  YENİ DEĞİŞMEZ: künye birden çok dosyada SABİT durabilir — ama hepsi
+#  js/buro-bilgi.js ile AYNI olmak zorundadır. Asıl risk "iki kopya" değil,
+#  "iki kopyanın birbirinden ayrışması"dır. Denetlenen budur.
+#
+#  Sapma bulunursa:  node tools/kunye-bas.js --uygula
 # ============================================================================
 set -uo pipefail
 cd "$(dirname "$0")/.." || exit 1
 
-# Refaktör tamamlandığında bunu 1 yapın → guard commit'i engellemeye başlar.
-ZORUNLU=${ZORUNLU:-0}
+ZORUNLU=${ZORUNLU:-1}
 
-YASAK=(
-  "Av. Umut Yücel Hukuk Bürosu" "Umut Yücel Hukuk Bürosu" "Yücel Hukuk Bürosu"
-  "Umut Yücel Hukuk" "Umut Yucel Hukuk" "Yucel Hukuk"
-)
-
-# Muaf olanlar:
-#   js/buro-bilgi.js  → künyenin tek meşru kaynağı
-#   *.md              → belge
-#   tools/            → guard'ın kendisi (YASAK dizisi bu dizgeleri içerir!)
-#   *.yedek-* / *.oncesi-*  → yedek kopyalar
-#   .github/ node_modules/ .git/ vendor/
-MUAF='^\./(js/buro-bilgi\.js|tools/|\.github/|node_modules/|\.git/|vendor/)|\.md$|\.yedek-|\.oncesi-|\.eski-|\.KARANTINA$|\.gomulu-'
-
-bulunan=()
-for v in "${YASAK[@]}"; do
-  while IFS= read -r f; do
-    [[ "$f" =~ $MUAF ]] && continue
-    bulunan+=("$f")
-  done < <(grep -rIl -F --exclude-dir=.git --exclude-dir=node_modules --exclude-dir=vendor "$v" . 2>/dev/null || true)
-done
-
-# tekilleştir
-if [ ${#bulunan[@]} -gt 0 ]; then
-  tekil=$(printf '%s\n' "${bulunan[@]}" | sort -u)
-else
-  tekil=''
-fi
-
-if [ -z "$tekil" ]; then
-  echo "✅ Künye tek kaynakta (js/buro-bilgi.js)."
+if ! command -v node >/dev/null 2>&1; then
+  echo "⚠️  node bulunamadı — künye denetimi atlandı."
   exit 0
 fi
 
-tekil_sayi=$(printf '%s\n' "$tekil" | grep -c '.' || true)
-
-echo "────────────────────────────────────────────────────────────"
-echo "Künye $tekil_sayi dosyada sabit yazılmış:"
-printf '%s\n' "$tekil" | while IFS= read -r satir; do
-  [ -n "$satir" ] && printf '   • %s\n' "$satir"
-done
-echo
-echo "Hedef: künye yalnız js/buro-bilgi.js'te dursun; diğerlerinde {{BURO}}"
-echo "işaretçisi olsun ve tools/kunye-bas.js doldursun."
-echo "Yol haritası: COPILOT-KUNYE-TEK-KAYNAK.md"
-echo "────────────────────────────────────────────────────────────"
-
-if [ "$ZORUNLU" = "1" ]; then
-  echo "❌ DENETİM BAŞARISIZ — commit durduruldu. (istisna: git commit --no-verify)"
-  exit 1
+if node tools/kunye-bas.js; then
+  exit 0
 fi
 
-echo "⚠️  UYARI MODU — commit'e izin veriliyor."
-echo "    Refaktör bitince bu dosyada ZORUNLU=1 yapın."
+echo
+echo "Düzeltme:  node tools/kunye-bas.js --uygula"
+echo "Kaynak   :  js/buro-bilgi.js  (tek doğruluk kaynağı)"
+if [ "$ZORUNLU" = "1" ]; then
+  echo "❌ DENETİM BAŞARISIZ — commit/push durduruldu. (istisna: --no-verify)"
+  exit 1
+fi
+echo "⚠️  UYARI MODU — devam ediliyor."
 exit 0
