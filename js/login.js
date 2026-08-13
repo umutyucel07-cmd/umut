@@ -17,10 +17,13 @@ function LoginScreen({
     if (e) e.preventDefault();
     setBekle(true);
     setHata(null);
+    // Dogrulama 13.08.2026'da SUNUCUYA tasindi; artik Promise donuyor.
+    // Eskiden senkrondu ve tarayicidaki acik muvekkil listesiyle karsilastiriyordu.
     setTimeout(() => {
-      const s = window.UYOturum.dogrula(kod);
-      setBekle(false);
-      if (s.ok) girisYap(s.muvekkil); else setHata(s.hata);
+      window.UYOturum.dogrula(kod).then(s => {
+        setBekle(false);
+        if (s && s.ok) girisYap(s.muvekkil); else setHata((s && s.hata) || 'Giriş yapılamadı.');
+      });
     }, 450);
   };
   const kanallar = [{
