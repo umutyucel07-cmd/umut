@@ -103,8 +103,14 @@ export async function onRequest({ request, env }) {
     });
   }
 
-  const phoneId = env.WA_PHONE_ID || env.PHONE_NUMBER_ID || env.WA_PHONE_NUMBER_ID;
-  const token = env.WA_TOKEN || env.WHATSAPP_TOKEN || env.WHATSAPP_ACCESS_TOKEN;
+  // Panele TELEFONDAN yapıştırılan değerin başına/sonuna satır sonu ya da
+  // boşluk bulaşabiliyor. Böyle bir karakter Authorization BAŞLIĞINA girerse
+  // fetch daha istek atılmadan fırlatır; 13.08 gecesi canlıda ölçülen 1101
+  // çöküşü buydu (eşleşen İLK gerçek talep bu yola ilk giren istekti).
+  // Jetonda ve numara kimliğinde boşluk türü karakter zaten OLAMAZ;
+  // tamamını süzmek güvenlidir, geçerli değeri değiştirmez.
+  const phoneId = String(env.WA_PHONE_ID || env.PHONE_NUMBER_ID || env.WA_PHONE_NUMBER_ID || '').replace(/\s+/g, '');
+  const token = String(env.WA_TOKEN || env.WHATSAPP_TOKEN || env.WHATSAPP_ACCESS_TOKEN || '').replace(/\s+/g, '');
   if (!phoneId || !token) {
     // Gönderemeyeceksek kod ÜRETMİYORUZ. Üretip gönderememek, müvekkilin
     // elindeki çalışan kodu sessizce iptal etmek demektir.
@@ -136,16 +142,31 @@ export async function onRequest({ request, env }) {
     'avumutyucelhukuk.com → Müvekkil Girişi bölümünden giriş yapabilirsiniz. ' +
     'Bu kod önceki kodunuzun yerine geçer. Kodu kimseyle paylaşmayınız. — Umut Yücel Hukuk Bürosu';
 
-  const yanit = await fetch(`https://graph.facebook.com/v20.0/${phoneId}/messages`, {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      messaging_product: 'whatsapp',
-      to: hedef,
-      type: 'text',
-      text: { body: metin },
-    }),
-  });
+  // fetch YANIT DÖNMEDEN de ölebilir (ağ hatası, geçersiz başlık karakteri).
+  // Yakalanmazsa sonuç 1101'dir: müvekkile hiçbir şey söylenmez, kuyruğa
+  // hiçbir iz düşmez — 13.08'de tam bu yaşandı. Artık her iki ölüm biçimi de
+  // aynı kapıdan çıkar: kuyruk kaydı + dürüst "gönderilemedi" yanıtı.
+  let yanit;
+  try {
+    yanit = await fetch(`https://graph.facebook.com/v20.0/${phoneId}/messages`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        messaging_product: 'whatsapp',
+        to: hedef,
+        type: 'text',
+        text: { body: metin },
+      }),
+    });
+  } catch (aghata) {
+    await talebiKuyruklaGuvenli(env.KOD_KV, muvekkil, tel, 'gonderim-hatasi');
+    return json({
+      ok: false,
+      durum: 'hata',
+      mesaj: 'Kodunuz şu anda gönderilemedi. Lütfen kısa süre sonra yeniden deneyiniz.',
+      detay: `fetch: ${String((aghata && aghata.message) || aghata).slice(0, 200)}`,
+    }, 502);
+  }
 
   // SIRA KRİTİK: önce GÖNDER, sonra eskiyi geçersiz kıl. Ters sırada
   // gönderim hata verirse müvekkil hem eski hem yeni kodsuz kalırdı.
