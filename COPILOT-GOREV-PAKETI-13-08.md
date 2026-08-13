@@ -38,81 +38,73 @@ yani müvekkile yalan başarı mesajı gösteren hata canlıda **hâlâ duruyor.
 
 ---
 
-## 2. ⚖️ BARO BELGESİ — unvan sorusunun cevabı değişti
+## 2. ⚖️ Baro belgesi ve unvan kararı — KARAR VERİLDİ
 
 Antalya Barosu Başkanlığı Sicil Servisi · **03.06.2026 · E-91130897-622.03-20599**
-(Belge doğrulama kodu 308B-1DA1-85U5, imza Av. Yasemin Sönmez, Başkan Yrd.)
+(doğrulama kodu 308B-1DA1-85U5, imza Av. Yasemin Sönmez, Başkan Yrd.)
 
-Belgenin teyit ettiği üç şey:
-
-| Kalem | Değer | Sitedeki hâli |
+| Kalem | Belge | Sitedeki hâli |
 |---|---|---|
 | Sicil no | **6448** | ✅ aynı |
-| Levha kaydı | **"Avukat Umut YÜCEL"** — gerçek kişi | — |
+| Levha kaydı | "Avukat Umut YÜCEL" — gerçek kişi | — |
 | Kayıtlı adres | Meltem Mah. İsmail Baha Sürelsan Cad. Birlik Apt. No:21 K:8 D:25 Muratpaşa/Antalya | ✅ **birebir aynı** |
 | Mesleğe başlama | 04/12/2019 | — |
+| Büro unvanı | **belgede yok** | — |
 
-**Belgede kayıtlı bir BÜRO UNVANI YOKTUR.** Kayıt bir gerçek kişi avukat kaydıdır.
+### ✅ KARAR (13.08.2026, Av. Umut Yücel): unvan KALIYOR
 
-Bu, beklenen "unvan teyidi" değildir — tersine, **teyit edilecek bir unvan olmadığını**
-gösterir. Sonuçları:
+**"Umut Yücel Hukuk Bürosu" kullanılmaya devam edecek.** Dayanak: AK m.43 — her avukat
+levhaya yazıldıktan sonra bir **büro** kurmak zorundadır; tek kişilik büronun bu şekilde
+anılması yerleşik kullanımdır. Baro yazısında ayrıca bir unvan kaydı bulunmaması, unvanın
+yasaklandığı anlamına gelmez.
 
-**Yapıldı:** Cevap Robotu'nun dışa dönük KIRMIZI sabit metni artık
-*"mesajınız Av. Umut Yücel'e ulaşmış"* diyor. Önceden *"… Hukuk Bürosu'na"* yazıyordu —
-teyit edilmemiş unvan, tanımadığı kişilere gönderilecek metinde. Üç görevin promptunda da
-düzeltildi.
+**Copilot için sonuç: unvanı hiçbir dosyadan KALDIRMAYIN.**
+`<title>`, `manifest.webmanifest`, `index.html`, `js/buro.js`, `js/buro-bilgi.js`
+olduğu gibi kalır. `unvan-degistir.sh` **çalıştırılmayacaktır.**
 
-**Karar sizde — iki seçenek:**
+**Tek ayrıntı:** Cevap Robotu'nun tanımadığı kişilere giden KIRMIZI sabit metninde
+kısa imza kullanılıyor — *"mesajınız Av. Umut Yücel'e ulaşmış"*. Bu, unvan kararıyla
+çelişmez; kısa imza her hâlde teyitli olan biçimdir. Sitede unvan, robot taslağında
+kısa imza — ikisi birlikte tutarlıdır.
 
-- **(a) Unvanı kaldırın.** `<title>`, `manifest.webmanifest`, `js/buro.js`, `index.html`
-  ve `js/buro-bilgi.js` içinde "Umut Yücel Hukuk Bürosu" → "Av. Umut Yücel".
-  Gerekçe: Yön. m.7/d kapalı listesi; kayıtlı olmayan bir unvan liste dışıdır.
-  Google `<title>`'ı indeksledi, değişiklik yeniden taranmalı.
-- **(b) Unvanı koruyun.** AK m.43 her avukatın bir **büro** kurmasını zorunlu tutar;
-  tek kişilik bir büronun "… Hukuk Bürosu" diye anılması yerleşik kullanımdır.
-  Risk: unvanın bir **avukatlık ortaklığı** (AK m.44/B) izlenimi vermesi.
+**Not (kozmetik, davranışı etkilemez):** Dört robot görevinden üçünün prompt metninde
+hâlâ 13.08 sabahına ait "BÜRO UNVANI KULLANILMAZ" paragrafı duruyor. Robotun ürettiği
+metin her iki sürümde de aynı ("Av. Umut Yücel" imzası), yalnız açıklama cümlesi eski.
+Bir sonraki oturumda dört görevin promptu tek metinde eşitlenecek. **Bu, siteyi ya da
+müvekkile giden metni etkilemez.**
 
-**Copilot bu kararı vermez.** Karar (a) ise şu komut altı varyantı beş kanalda tek
-seferde değiştirir:
-
-```bash
-~/.agents/skills/umut-yucel-sistem/araclar/unvan-degistir.sh \
-  --baro-teyit --yeni "Av. Umut Yücel" --uygula
-```
-
-Çalıştırmadan önce `<title>` etiketine bakın — "Av. Umut Yücel · Av. Umut Yücel — Antalya"
-gibi bir tekrar oluşursa elle sadeleştirin.
-
----
-
-## 3. 🤖 Cevap Robotu — yeni saat düzeni (kuruldu)
+## 3. 🤖 Cevap Robotu — üç yoğunluk bandı (kuruldu)
 
 İstenen "mesai içinde yarım saatte bir" **platform tarafından reddedildi**:
-zamanlanmış görevlerde **asgari aralık 1 saattir**. `0,30 6-15 * * 1-5` ifadesi
-`cron interval too short` hatası verdi. Bu bir yapılandırma tercihi değil, sistem sınırıdır.
+zamanlanmış görevlerde **asgari aralık 1 saattir** (`0,30 6-15 * * 1-5` →
+`cron interval too short`). Bu bir tercih değil, sistem sınırıdır.
 
-Sınır içinde kurulan düzen:
+Sınır içinde kurulan düzen — **mesai yoğun · ara saatler olağan · gece çok az**:
 
-| Görev | Cron (UTC) | Türkiye saati | Tur |
-|---|---|---|---|
-| **Cevap Robotu · Mesai** | `0 6-15 * * 1-5` | Hafta içi 09:00–18:00, **saatlik** | 10 |
-| **Cevap Robotu · Gece ve Kenar** | `0 1,3,16,19,22 * * *` | Her gün 04:00 · 06:00 · 19:00 · 22:00 · 01:00 | 5 |
-| **Cevap Robotu · Hafta Sonu Gündüz** | `0 7,10,13 * * 0,6` | Cmt/Paz 10:00 · 13:00 · 16:00 | 3 |
+| Görev | Cron (UTC) | Türkiye saati | Tur | Bant |
+|---|---|---|---|---|
+| **· Mesai** | `0 6-15 * * 1-5` | Hafta içi 09:00–18:00, saatlik | 10 | **yoğun** |
+| **· Ara Saatler** | `0 3,5,16,18 * * *` | Her gün 06:00 · 08:00 · 19:00 · 21:00 | 4 | olağan |
+| **· Hafta Sonu** | `0 7,9,11,13,15 * * 0,6` | Cmt/Paz 10:00–18:00, 2 saatte bir | 5 | olağan |
+| **· Gece** | `0 19,22,1 * * *` | Her gün 22:00 · 01:00 · 04:00 | 3 | **çok az** |
 
-**Gece bandı (21:00–06:00) tam üç tur:** 22:00 · 01:00 · 04:00 — istenen sayı birebir.
-Mesai saatlik (izin verilen en sık). Kalan saatler seyrek.
+**Çakışma yok:** Mesai 09–18 hafta içi; Ara 06/08 ve 19/21 (mesai dışı); Gece 22/01/04;
+Hafta Sonu yalnız Cmt/Paz 10–18. Hiçbir saat iki görevde birden geçmiyor.
 
-Eski tek görev günde 15 tur atıyordu, hafta sonu dâhil. Yeni düzen hafta içi 15,
-hafta sonu 8 tur — yükü mesaiye kaydırdı.
+Günlük toplam: hafta içi **17 tur**, hafta sonu **12 tur**. Eskisi her gün 15 turdu
+ve hepsi düz dağılıyordu; yük artık mesaiye kaymış durumda.
+
+Her görevin promptunda kendi bandına özel not var: gece turunda "az önce/şu an" gibi
+ana bağlı ifade yasak (taslak sabah gönderilecek); ara saat turunda randevu için mesai
+saatine işaret ediliyor; hafta sonu turunda adliyenin kapalı olduğu ama CMK 91/94
+sürelerinin işlediği yazılı.
 
 ### Daha hızlı yanıt gerçekten isteniyorsa
 
-Zamanlanmış görev sıklığı **yanıt hızını belirlemez**. Müvekkile giden ilk teyit
-Worker'ın webhook'undan **anında** çıkar; zamanlanmış görev yalnız triyaj süpürgesidir.
-Hızı belirleyen ayar Worker içindeki `ACK_SOGUMA_SN=3600` (kişi başına 1 saat soğuma).
-Mesai içinde 1800'e (30 dk) indirilebilir — **Worker kodu değişikliğidir**, §4'e bakın.
-
----
+Görev sıklığı **yanıt hızını belirlemez**. Müvekkile giden ilk teyit Worker'ın
+webhook'undan **anında** çıkar; zamanlanmış görev yalnız triyaj süpürgesidir.
+Hızı belirleyen ayar `ACK_SOGUMA_SN=3600` (kişi başına 1 saat soğuma) — mesai içinde
+1800'e indirilebilir. **Worker kodu değişikliğidir**, §4'e bakın.
 
 ## 4. 🔵 Worker — dördüncü şablon: dosya durumu
 
@@ -168,7 +160,7 @@ ya disiplin riskine ya kişisel veriye dayanıyor; gevşetmenin karşılığı y
 
 ---
 
-## 6. 🔑 Müvekkil Bilgi Sistemi — 472 erişim kodu
+## 6. 🔑 Müvekkil Bilgi Sistemi — 472 erişim kodu (COPILOT + KULLANICI)
 
 Kod dağıtım altyapısı hazır. Eksik olan **üç ortam değişkeni**.
 
@@ -181,6 +173,31 @@ Cloudflare Dashboard → Workers & Pages → proje → **Settings → Environmen
 | `WA_TOKEN` | WhatsApp Cloud API kalıcı jetonu | **Secret** |
 
 İsteğe bağlı: `KOD_KV` adında KV binding → IP başına dakikada 3 istek sınırı devreye girer.
+
+### Copilot'un yapacağı hazırlık (jetonsuz kısım)
+
+`KODLAR` değerini üretmek Copilot'un işidir; **girmek** kullanıcınındır. Adımlar:
+
+1. `~/05_Bellek_Arsivi/PORTAL-DAGITIM/portal-kv-bulk.json` dosyasından
+   `[{"ad","tel","eposta","kod"}]` biçiminde tek satırlık JSON üret.
+2. Üretilen dosyayı **depoya koymayın** — `.gitignore` zaten `portal-kv-*.json`
+   desenini süzüyor; yeni dosya da aynı desende adlandırılmalı.
+3. Kullanıcıya tek adım bırakın: dosyayı açıp içeriği kopyalayıp Cloudflare
+   arayüzünde `KODLAR` secret alanına yapıştırmak.
+4. `WA_PHONE_ID` **gizli değildir** — `109650188830111` düz metin olarak girilir.
+5. `WA_TOKEN`'ı Copilot **görmez ve üretmez**; Meta Business arayüzünden yalnız
+   kullanıcı alır ve yapıştırır.
+
+Doğrulama (jeton gerektirmez, herkes çalıştırabilir):
+
+```bash
+curl -s https://avumutyucelhukuk.com/api/kod-talebi
+# beklenen: {"ok":true,"service":"kod-talebi"}
+```
+
+Üç değişken girildikten sonra eşleşen bir müvekkil için `durum` alanı
+`"kuyruk"` yerine `"gonderildi"` dönmeye başlar. Dönmüyorsa değişkenler
+yanlış isimle girilmiş demektir.
 
 > ⛔ **Bu üç değeri ne Copilot ne Claude giremez.** `WA_TOKEN` bir kimlik bilgisidir;
 > `KODLAR` 472 müvekkilin adı, telefonu ve kodudur. **Yalnız Av. Umut Yücel** girer.
@@ -227,7 +244,7 @@ kendi numarasına/e-postasına, tek tek.
 
 | # | İş | Kimde | Not |
 |---|---|---|---|
-| 1 | `git push origin main` (4 commit) | **Copilot / kullanıcı** | Cowork köprüsünde ağ yok |
+| 1 | `git push origin main` | **Copilot / kullanıcı** | ✅ 13.08 gecesi 4 commit gitti; yenileri bekliyor |
 | 2 | Kilit artıklarını sil (`.git/*.lock.at*`) | **Kullanıcı** | Köprü silemiyor |
 | 3 | `KODLAR` · `WA_TOKEN` · `WA_PHONE_ID` | **Yalnız kullanıcı** | Kimlik bilgisi + kişisel veri |
 | 4 | Worker 4. şablon (§4) | Copilot | Dört koşul atlanmadan |
@@ -236,7 +253,7 @@ kendi numarasına/e-postasına, tek tek.
 | 7 | Künye tek kaynak refaktörü | Copilot | `COPILOT-KUNYE-TEK-KAYNAK.md` |
 | 8 | Refaktör sonrası `ZORUNLU=1` | Copilot | `tools/kunye-denetle.sh` |
 | 9 | Portal sunucu doğrulaması | Copilot + kullanıcı | `PORTAL-KURULUM.md` |
-| 10 | Unvan kararı (§2) | **Yalnız kullanıcı** | Hukuki tercih |
+| 10 | ~~Unvan kararı~~ | ✅ **karar verildi** | Unvan KALIYOR — §2 |
 | 11 | Instagram site bağlantısı + parola | **Yalnız kullanıcı** | Parola girişi devredilmez |
 | 12 | WhatsApp Business "Hakkında" | **Yalnız kullanıcı** | Yalnız telefon uygulamasından |
 | 13 | Gmail → Gelişmiş Güvenli Tarama | **Yalnız kullanıcı** | Hesap ayarı |
@@ -252,7 +269,14 @@ hangi adımla commit atıyorsa **öncesine** şu satır konmalı:
 ./tools/index-denetle.sh || exit 1
 ```
 
-Kanca tek başına yetmiyor: `--no-verify` ile atlanabiliyor ve bir kez atlandı.
+**✅ 13.08.2026'da yapıldı — `pre-push` kancası kuruldu.** Gerekçesi şu: `pre-commit`
+kancası `git commit --no-verify` ile atlanabiliyor ve **bir kez atlandı**; üçüncü site
+gerilemesi tam o boşluktan girdi. Commit yereldir, **push canlıya gider** — asıl kapı
+push'tur. Artık her `git push` öncesi `tools/index-denetle.sh` çalışıyor; başarısızsa
+push durur.
+
+Kanca dosyası: `.git/hooks/pre-push`. Git kancaları depoda taşınmaz — **yeni bir klon
+yapılırsa bu dosya kopyalanmalıdır.** Bilinçli istisna: `git push --no-verify`.
 
 ---
 

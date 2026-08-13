@@ -1,4 +1,5 @@
 (function(){
+var window = typeof globalThis.window !== 'undefined' ? globalThis.window : (globalThis.window = {});
 window.BURO = {
   ad: 'Av. Umut Yücel',
   buro: 'Umut Yücel Hukuk Bürosu',
@@ -87,4 +88,5 @@ window.MUVEKKILLER = [{
 // ---- Ölçüm ----
 // Cloudflare tarafında çalışan izleme, kaynak dosyada doğrudan eklenmez.
 // Bu dosya dış bağımlılık içermemelidir.
+if (typeof module !== 'undefined' && module.exports) { module.exports = window.BURO; }
 })();

@@ -8,6 +8,7 @@ const Buro = require(path.join(ROOT, 'js', 'buro-bilgi.js'));
 const hedefler = [
   'index.html',
   'manifest.webmanifest',
+  'js/buro.js',
   'functions/api/kod-talebi.js',
   'functions/api/webhook.js',
 ];
