@@ -53,10 +53,6 @@ export async function onRequest({ request, env }) {
   }
 
   if (!env.KOD_KV) {
-    // "Talebiniz alınmıştır" DEMİYORUZ. KV bağlı değilken talep hiçbir yere
-    // yazılamaz; yazılamayan bir talep için verilen söz tutulamaz. 13.08'de
-    // kuyruk yazımı tam bu yüzden eklenmişti — kuyruğun kendisi yokken aynı
-    // sözü tekrarlamak, düzelttiğimiz hatanın kopyası olurdu.
     return json({
       ok: true,
       durum: 'hazir-degil',
@@ -75,15 +71,6 @@ export async function onRequest({ request, env }) {
 
   const biber = await biberAl(env.KOD_KV);
 
-  // Dizin hiç yüklenmemişse bu bir EŞLEŞMEME değil, YAPILANDIRMA eksiğidir.
-  // Müvekkile "kayıtlarımızla eşleşmedi" demek yanlış olur — 12.08'de canlıda
-  // tam olarak bu yalan söylenmişti, tekrarlanmayacak.
-  //
-  // AMA "talebiniz alınmıştır" demek de yanlıştı; 13.08 akşamı canlıda ölçüldü:
-  // bu dal söz veriyor ve talebi HİÇBİR YERE yazmıyordu. Kuyruğa yazamayız da —
-  // kuyruk yalnız EŞLEŞEN müvekkili saklar, eşleştirmenin hiç yapılamadığı bir
-  // anda yazmak, büroyla ilişkisi belirsiz kişilerin ad ve telefonunu toplamak
-  // olurdu. İki kötü seçenek arasında doğru olan üçüncüsü: söz vermemek.
   const dizin = await env.KOD_KV.get('sys:dizin', { type: 'json' });
   if (!dizin || !dizin.adet) {
     return json({
@@ -103,24 +90,11 @@ export async function onRequest({ request, env }) {
     });
   }
 
-  // Panele TELEFONDAN yapıştırılan değerin başına/sonuna satır sonu ya da
-  // boşluk bulaşabiliyor. Böyle bir karakter Authorization BAŞLIĞINA girerse
-  // fetch daha istek atılmadan fırlatır; 13.08 gecesi canlıda ölçülen 1101
-  // çöküşü buydu (eşleşen İLK gerçek talep bu yola ilk giren istekti).
-  // Jetonda ve numara kimliğinde boşluk türü karakter zaten OLAMAZ;
-  // tamamını süzmek güvenlidir, geçerli değeri değiştirmez.
+  // Panele TELEFONDAN yapıştırılan değerin başına/sonuna boşluk bulaşabilir;
+  // Authorization başlığına girerse fetch fırlatır (1101). Süzmek güvenli.
   const phoneId = String(env.WA_PHONE_ID || env.PHONE_NUMBER_ID || env.WA_PHONE_NUMBER_ID || '').replace(/\s+/g, '');
   const token = String(env.WA_TOKEN || env.WHATSAPP_TOKEN || env.WHATSAPP_ACCESS_TOKEN || '').replace(/\s+/g, '');
   if (!phoneId || !token) {
-    // Gönderemeyeceksek kod ÜRETMİYORUZ. Üretip gönderememek, müvekkilin
-    // elindeki çalışan kodu sessizce iptal etmek demektir.
-    //
-    // AMA "talebiniz alındı" demek de tek başına YETMEZ. 13.08'e kadar bu dal
-    // müvekkile söz veriyor ve talebi HİÇBİR YERE yazmıyordu: kimin kod
-    // istediği kaybolduğu için o söz tutulamazdı. Bugün onardığımız hatanın
-    // aynısı - gerçekleşmeyecek bir şeyi olmuş gibi söylemek.
-    // Artık talep kuyruğa YAZILIYOR; avukat Cloudflare → KV → talep:
-    // önekinden görür ve elle gönderir.
     await talebiKuyruklaGuvenli(env.KOD_KV, muvekkil, tel, 'wa-yok', 'WA_TOKEN/WA_PHONE_ID tanımsız');
     return json({
       ok: true,
@@ -131,23 +105,15 @@ export async function onRequest({ request, env }) {
 
   const yeniKod = kodUret();
 
-  // ÜLKE KODU 90, "9" DEĞİL.  Önceki sürümde bu satır  '9' + son10  idi:
-  // 0532 000 00 00 → 95320000000 (11 hane). Türkiye için doğrusu
-  // 905320000000 (12 hane). WA_TOKEN tanımlı olmadığı için bu kod yolu
-  // canlıda hiç çalışmamıştı; jeton girildiği gün HER gönderim sessizce
-  // hatalı numaraya gidecekti. Deneme senaryosu yakaladı.
+  // ÜLKE KODU 90, "9" değil (0532… → 90532…, 12 hane).
   const hedef = '90' + telNormalize(muvekkil.tel || tel);
   const metin =
     `Sayın ${muvekkil.ad || ad}, portal erişim kodunuz: ${yeniKod}. ` +
     'avumutyucelhukuk.com → Müvekkil Girişi bölümünden giriş yapabilirsiniz. ' +
     'Bu kod önceki kodunuzun yerine geçer. Kodu kimseyle paylaşmayınız. — Umut Yücel Hukuk Bürosu';
 
-  // fetch YANIT DÖNMEDEN de ölebilir (ağ hatası). 13.08 canlı ölçümü:
-  // jeton süzülmüş, numara kimliği temizken bile Meta'nın ucu isteği TCP
-  // düzeyinde kesti ("Network connection lost."). Bilinen etken: Meta'nın
-  // sınır sunucusu User-Agent'sız istekleri ara ara robot sayıp düşürüyor.
-  // Çare iki katlı: gerçek bir User-Agent + kısa aralıklı TEK yeniden deneme.
-  // İkisi de düşerse kuyruk kaydı + dürüst "gönderilemedi" yanıtı.
+  // Meta ucu User-Agent'sız isteği TCP'de kesebiliyor ("Network connection
+  // lost."). Çare: gerçek User-Agent + kısa aralıklı TEK yeniden deneme.
   const gonderimIstek = () => fetch(`https://graph.facebook.com/v20.0/${phoneId}/messages`, {
     method: 'POST',
     headers: {
@@ -171,37 +137,30 @@ export async function onRequest({ request, env }) {
       await new Promise((coz) => setTimeout(coz, 400));
       yanit = await gonderimIstek();
     } catch (aghata) {
-      // 502 DÖNMÜYORUZ: Cloudflare, 502 durum kodlu yanıtın gövdesini kendi
-      // "error code: 502" sayfasıyla değiştiriyor (13.08 gecesi canlıda
-      // ölçüldü; JSON kayboldu, ekran gerçek sebebi hiç göremedi).
-      // 200 + durum:'hata' gerçek mesajı ekrana taşır.
+      // GÜVENLİK: detay YALNIZ KV kuyruğuna yazılır, HTTP yanıtına KONMAZ —
+      // aksi hâlde her çağıran arka uç hata durumunu (jeton/pencere) okur.
+      // 200 + durum:'hata' dönüyoruz; Cloudflare 502 gövdesini yutuyor.
       const detay = `fetch: ${String((aghata && aghata.message) || aghata).slice(0, 200)}`;
       await talebiKuyruklaGuvenli(env.KOD_KV, muvekkil, tel, 'gonderim-hatasi', detay);
       return json({
         ok: false,
         durum: 'hata',
         mesaj: 'Kodunuz şu anda gönderilemedi; talebiniz not edildi. Büromuz kodu en kısa sürede iletecektir.',
-        detay,
       });
     }
   }
 
-  // SIRA KRİTİK: önce GÖNDER, sonra eskiyi geçersiz kıl. Ters sırada
-  // gönderim hata verirse müvekkil hem eski hem yeni kodsuz kalırdı.
+  // SIRA KRİTİK: önce GÖNDER, sonra eskiyi geçersiz kıl.
   if (!yanit.ok) {
     const hata = await yanit.text().catch(() => '');
-    // Gönderim düştü: kod ÜRETİLDİ ama gitmedi. Eski kod hâlâ geçerli
-    // (aşağıdaki silme satırına HİÇ ulaşılmıyor). Talep, Meta'nın hata
-    // metniyle BİRLİKTE kuyruğa yazılır: avukat "neden gitmedi"yi KV'den
-    // okur (401=jeton, 131047=24 saat penceresi, 131021=alıcı=gönderici).
-    // Durum kodu 200: 502 gövdesini Cloudflare kendi sayfasıyla değiştiriyor.
+    // detay KV kuyruğuna yazılır (401=jeton, 131047=24s penceresi,
+    // 131021=alıcı=gönderici); HTTP yanıtına KONMAZ.
     const detay = `HTTP ${yanit.status}: ${hata.slice(0, 200)}`;
     await talebiKuyruklaGuvenli(env.KOD_KV, muvekkil, tel, 'gonderim-hatasi', detay);
     return json({
       ok: false,
       durum: 'hata',
       mesaj: 'Kodunuz şu anda gönderilemedi; talebiniz not edildi. Büromuz kodu en kısa sürede iletecektir.',
-      detay,
     });
   }
 
@@ -224,20 +183,9 @@ export async function onRequest({ request, env }) {
 }
 
 /**
- * Bekleyen kod talebini KV'ye yazar.
- *
- * NE YAZILIR: müvekkilin adı, telefonunun SON DÖRT hanesi ve sebep.
- * Tam telefon numarası YAZILMAZ - avukat zaten kendi kayıtlarından bulur,
- * kuyruk kaydının onu tekrarlamasına gerek yok.
- *
- * KİM YAZILIR: yalnız EŞLEŞEN müvekkil. Eşleşmeyen bir talep bu noktaya hiç
- * ulaşmaz; büroyla ilişkisi olmayan kişinin adı ve numarası kaydedilmez.
- *
- * NEREDE GÖRÜLÜR: Cloudflare → Workers KV → uy-portal-kimlik → "talep:" öneki.
- * 30 gün sonra kendiliğinden düşer.
- *
- * Bu yazım BAŞARISIZ OLURSA istek düşmez: müvekkile verilen yanıt bundan
- * bağımsızdır. Kuyruk bir kolaylıktır, akışın şartı değildir.
+ * Bekleyen kod talebini KV'ye yazar. Ad + telefonun SON DÖRT hanesi + sebep +
+ * detay; tam numara YAZILMAZ. Yalnız EŞLEŞEN müvekkil. Cloudflare → KV →
+ * "talep:" öneki; 30 günde düşer. Başarısız olursa istek düşmez.
  */
 async function talebiKuyruklaGuvenli(kv, muvekkil, tel, sebep, detay = '') {
   if (!kv) return;
