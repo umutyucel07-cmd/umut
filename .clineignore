@@ -1,0 +1,22 @@
+# Gizli Silah V4 — token motoru + gizli veri koruması
+# Bu yollar ajan bağlamına VARSAYILAN girmez; yalnız açık görev yetkisiyle açılır.
+.git/
+.venv/
+venv/
+node_modules/
+dist/
+build/
+cache/
+logs/
+.env
+.env.*
+secrets/
+*.pem
+*token*
+# Müvekkil / kişisel veri (ajana kapalı)
+_Veri/
+_to_delete/
+client_data/
+exports/
+muvekkil*/
+*muvekkil*
