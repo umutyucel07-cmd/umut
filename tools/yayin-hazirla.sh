@@ -67,6 +67,7 @@ DIZINLER=(
   vendor
   assets
   functions
+  yonetim-uy2608
 )
 
 for f in "${DOSYALAR[@]}"; do
