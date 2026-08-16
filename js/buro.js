@@ -543,7 +543,14 @@ function BuroScreen({
     style: {
       color: 'var(--text-heading)'
     }
-  }, window.BURO.tcNo)), /*#__PURE__*/React.createElement(Button, {
+  }, window.BURO.tcNo || "M\xFCvekkil Giri\u015Finde g\xF6r\xFCn\xFCr")), /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontSize: 'var(--text-caption)',
+      color: 'var(--text-faint)',
+      marginTop: 'var(--space-3)',
+      lineHeight: 'var(--leading-relaxed)'
+    }
+  }, "T.C. kimlik numaram\u0131z, kimlik bilgilerinin k\xF6t\xFCye kullan\u0131lmas\u0131n\u0131 \xF6nlemek i\xE7in sitede a\xE7\u0131k yay\u0131mlanmaz; M\xFCvekkil Giri\u015Fi b\xF6l\xFCm\xFCnde g\xF6r\xFCnt\xFClenir. Noterde gerekirse b\xFCromuzu aray\u0131n\u0131z, telefonla bildirelim."), /*#__PURE__*/React.createElement(Button, {
     variant: "secondary",
     size: "sm",
     icon: "upload",
@@ -581,7 +588,7 @@ function BuroScreen({
     }
   }, "Kartla \xF6demeler Moka United g\xFCvenli \xF6deme sayfas\u0131 \xFCzerinden al\u0131n\u0131r; kart bilgileriniz b\xFCroda saklanmaz. Havale/EFT de yapabilirsiniz."), /*#__PURE__*/React.createElement(Button, {
     as: "a",
-    href: window.BURO.odemeLink,
+    href: window.BURO.odemeLink || '#/login',
     target: "_blank",
     rel: "noopener",
     variant: "accent",
@@ -608,7 +615,7 @@ function BuroScreen({
     style: {
       color: 'var(--text-heading)'
     }
-  }, window.BURO.banka), /*#__PURE__*/React.createElement("span", {
+  }, window.BURO.banka || "\u2014"), /*#__PURE__*/React.createElement("span", {
     style: {
       color: 'var(--text-faint)'
     }
@@ -616,7 +623,7 @@ function BuroScreen({
     style: {
       color: 'var(--text-heading)'
     }
-  }, window.BURO.ibanHesap), /*#__PURE__*/React.createElement("span", {
+  }, window.BURO.ibanHesap || "\u2014"), /*#__PURE__*/React.createElement("span", {
     style: {
       color: 'var(--text-faint)'
     }
@@ -626,7 +633,14 @@ function BuroScreen({
       color: 'var(--text-heading)',
       fontSize: 14
     }
-  }, window.BURO.iban)), /*#__PURE__*/React.createElement("p", {
+  }, window.BURO.iban || "Giri\u015F yapt\u0131\u011F\u0131n\u0131zda g\xF6r\xFCn\xFCr")), /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontSize: 'var(--text-caption)',
+      color: 'var(--text-faint)',
+      marginTop: 'var(--space-3)',
+      lineHeight: 'var(--leading-relaxed)'
+    }
+  }, "Hesap bilgilerimiz yaln\u0131z M\xFCvekkil Giri\u015Fi yap\u0131ld\u0131ktan sonra g\xF6sterilir. B\xFCromuz IBAN, kart bilgisi ya da eri\u015Fim kodunu telefon, SMS veya mesaj yoluyla H\u0130\xC7B\u0130R ZAMAN talep etmez. B\xF6yle bir istek gelirse \xF6deme yapmadan \xF6nce b\xFCromuzu aray\u0131n\u0131z."), /*#__PURE__*/React.createElement("p", {
     style: {
       fontSize: 'var(--text-caption)',
       color: 'var(--text-faint)',

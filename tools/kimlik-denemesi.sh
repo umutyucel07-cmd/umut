@@ -15,8 +15,10 @@ cd "$(dirname "$0")/.."
 D=$(mktemp -d)
 trap 'rm -rf "$D"' EXIT
 cp lib/kimlik.js            "$D/kimlik.mjs"
+cp lib/buro-gizli.js        "$D/buro-gizli.mjs"   # 16.08: giris yaniti buradan besleniyor
 cp functions/api/giris.js   "$D/giris.mjs"
 cp functions/api/kod-talebi.js "$D/kod.mjs"
 cp tools/kimlik-denemesi.mjs   "$D/test.mjs"
 sed -i.yedek "s#'../../lib/kimlik.js'#'./kimlik.mjs'#" "$D/giris.mjs" "$D/kod.mjs"
+sed -i.yedek "s#'../../lib/buro-gizli.js'#'./buro-gizli.mjs'#" "$D/giris.mjs"
 node "$D/test.mjs"

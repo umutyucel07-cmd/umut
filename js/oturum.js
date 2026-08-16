@@ -73,7 +73,10 @@
       }).then(jsonAl).then(function (c) {
         if (c && c.ok && c.muvekkil) {
           sil(KILIT);
-          yaz(OTURUM, { kod: kod, t: Date.now(), muvekkil: c.muvekkil });
+          // c.buro — büro kimlik/ödeme alanları. 16.08'de js/buro-bilgi.js'ten
+          // çıkarıldı; artık yalnız doğrulanmış yanıtla geliyor.
+          yaz(OTURUM, { kod: kod, t: Date.now(), muvekkil: c.muvekkil, buro: c.buro || null });
+          window.UYOturum.buroBirlestir();
           return { ok: true, muvekkil: c.muvekkil };
         }
 
@@ -107,7 +110,32 @@
       return o.muvekkil;
     },
 
-    cikis: function () { sil(OTURUM); },
+    // Oturumdaki büro alanlarını window.BURO üzerine ekler.
+    // Sayfa yüklenirken ve giriş başarılı olduğunda çağrılır.
+    // Giriş yoksa hiçbir şey yapmaz — window.BURO.girisGerekli() true kalır.
+    buroBirlestir: function () {
+      try {
+        var o = oku(OTURUM);
+        if (!o || !o.buro || !window.BURO) return false;
+        if (Date.now() - (o.t || 0) > OTURUM_GUN * 864e5) return false;
+        for (var k in o.buro) {
+          if (Object.prototype.hasOwnProperty.call(o.buro, k)) window.BURO[k] = o.buro[k];
+        }
+        return true;
+      } catch (e) { return false; }
+    },
+
+    cikis: function () {
+      sil(OTURUM);
+      // Çıkışta büro alanları da tarayıcıdan silinir — açık kalmasın.
+      try {
+        if (window.BURO) {
+          ['tcNo', 'iban', 'ibanDuz', 'banka', 'ibanHesap', 'odemeLink'].forEach(function (k) {
+            delete window.BURO[k];
+          });
+        }
+      } catch (e) {}
+    },
 
     adNorm: function (a) { return String(a || '').trim().replace(/\s+/g, ' ').toLocaleUpperCase('tr-TR'); },
 
@@ -157,4 +185,12 @@
       });
     },
   };
+
+  // Sayfa açılışında oturumdaki büro alanlarını geri yükle.
+  // buro-bilgi.js bu dosyadan ÖNCE yüklendiği için window.BURO hazırdır;
+  // yine de defer sırası değişirse diye DOMContentLoaded'da bir kez daha denenir.
+  window.UYOturum.buroBirlestir();
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function () { window.UYOturum.buroBirlestir(); });
+  }
 })();

@@ -52,7 +52,15 @@
     var dosya = mv && mv.dosyalar && mv.dosyalar[0];
     var TIPLER = [
       ['calendar-days', 'Yaklaşan duruşmam ne zaman?', function () { return dosya && dosya.nextDate ? 'Kayıtlarımıza göre en yakın işlem tarihi: ' + dosya.nextDate + ' (' + dosya.title + ' — ' + dosya.court + ').' : 'Dosyanızda planlanmış bir duruşma günü görünmemektedir; tarih belirlendiğinde bilgilendirilirsiniz.'; }, false],
-      ['landmark', 'Ödeme ve IBAN bilgisi', function () { return 'Kartla ödeme için Ödemeler sekmesini kullanabilirsiniz. Havale/EFT: ' + window.BURO.iban + ' (Alıcı: ' + (window.BURO.ibanHesap || 'UMUT YÜCEL') + '). Açıklamaya dosya numaranızı yazmanız yeterlidir.'; }, false],
+      ['landmark', 'Ödeme ve IBAN bilgisi', function () {
+        // 16.08.2026 — hesap bilgisi yalnız giriş yapıldıktan sonra gösterilir.
+        // Önceden IBAN herkese açık js/buro-bilgi.js'ten geliyordu; artık
+        // /api/giris ucundan, doğrulanmış oturumla iniyor.
+        if (!window.BURO.iban) {
+          return 'Ödeme bilgilerimiz güvenlik nedeniyle sitede açık yayımlanmaz; Müvekkil Girişi yaptıktan sonra Ödemeler sekmesinde görüntülenir. Büromuz IBAN veya kart bilgisini telefon, SMS ya da mesajla hiçbir zaman talep etmez.';
+        }
+        return 'Kartla ödeme için Ödemeler sekmesini kullanabilirsiniz. Havale/EFT: ' + window.BURO.iban + ' (Alıcı: ' + (window.BURO.ibanHesap || 'UMUT YÜCEL') + '). Açıklamaya dosya numaranızı yazmanız yeterlidir.';
+      }, false],
       ['map-pin', 'Adres ve yol tarifi', function () { return window.BURO.adres + ' — ' + window.BURO.tarif; }, false],
       ['file-text', 'Belge sureti talep ediyorum', function () { return 'Talebiniz alınmıştır. Belgeler gizlilik gereği portalde tutulmaz; en geç bir iş günü içinde WhatsApp ya da KEP üzerinden tarafınıza iletilir.'; }, true],
       ['calendar-clock', 'Randevumu değiştirmek istiyorum', function () { return 'Talebiniz alınmıştır. Dilerseniz Randevular sekmesinden uygun saat seçebilirsiniz; aksi hâlde en geç bir iş günü içinde yeni saat önerisiyle dönüş yapılır.'; }, true],

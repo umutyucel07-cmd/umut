@@ -676,7 +676,7 @@ function PortalScreen({
     }
   }, "Moka United g\xFCvenli \xF6deme sayfas\u0131 \xB7 3D Secure"))), /*#__PURE__*/React.createElement(Button, {
     as: "a",
-    href: window.BURO.odemeLink,
+    href: window.BURO.odemeLink || '#/login',
     target: "_blank",
     rel: "noopener",
     variant: "accent",
@@ -728,7 +728,7 @@ function PortalScreen({
     style: {
       color: 'var(--text-heading)'
     }
-  }, window.BURO.banka), /*#__PURE__*/React.createElement("span", {
+  }, window.BURO.banka || "\u2014"), /*#__PURE__*/React.createElement("span", {
     style: {
       color: 'var(--text-faint)'
     }
@@ -736,7 +736,7 @@ function PortalScreen({
     style: {
       color: 'var(--text-heading)'
     }
-  }, window.BURO.ibanHesap), /*#__PURE__*/React.createElement("span", {
+  }, window.BURO.ibanHesap || "\u2014"), /*#__PURE__*/React.createElement("span", {
     style: {
       color: 'var(--text-faint)'
     }
@@ -746,7 +746,7 @@ function PortalScreen({
       color: 'var(--text-heading)',
       fontSize: 14
     }
-  }, window.BURO.iban)), /*#__PURE__*/React.createElement(Button, {
+  }, window.BURO.iban || "Oturum yenilendi\u011Finde g\xF6r\xFCn\xFCr")), /*#__PURE__*/React.createElement(Button, {
     variant: "secondary",
     size: "sm",
     icon: copied ? 'check' : 'copy',
@@ -754,7 +754,7 @@ function PortalScreen({
       marginTop: 'var(--space-3)'
     },
     onClick: () => {
-      navigator.clipboard && navigator.clipboard.writeText(window.BURO.ibanDuz);
+      navigator.clipboard && navigator.clipboard.writeText(window.BURO.ibanDuz || '');
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     }

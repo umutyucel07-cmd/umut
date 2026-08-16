@@ -48,3 +48,12 @@
 # /tools/yayin-hazirla.sh ve /.env.example ~69 saatlik önbellek kayıtlarından
 # hâlâ sunuluyordu (origin temiz olduğu hâlde). Çözümü başlık değil, ÖNBELLEK
 # TEMİZLİĞİdır: Cloudflare → Caching → Configuration → Purge Cache.
+
+# ── Duyuru görseli — arama motoruna kapalı ────────────────────────────────
+#  16.08.2026: Instagram duyurusunun görselinin herkese açık bir URL'de olması
+#  gerekiyor (Zapier'in "Publish Photo(s)" eylemi ham dosya değil URL alıyor).
+#  Görsel siteye konuldu ama HİÇBİR SAYFADAN bağlantı verilmedi ve arama
+#  motoruna kapatıldı: site içeriği değil, yalnız yayın için barındırma.
+/assets/duyuru-*
+  X-Robots-Tag: noindex, noimageindex, nofollow
+  Cache-Control: public, max-age=31536000, immutable
