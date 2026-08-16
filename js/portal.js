@@ -18,57 +18,25 @@ const {
   Dialog,
   Toast
 } = window.LexaHukukDesignSystem_93e85e;
-const CASES = [{
-  id: 1,
-  title: 'Örnek Dosya',
-  fileNo: '0000/0000 E.',
-  court: 'Örnek Mahkeme',
-  status: 'hearing',
-  nextDate: '14 Nisan 2026, 09:40',
-  progress: 62,
-  unread: 2
-}, {
-  id: 2,
-  title: 'Örnek Dosya 2',
-  fileNo: '0000/0000 E.',
-  court: 'Örnek Mahkeme',
-  status: 'active',
-  nextDate: '2 Mayıs 2026, 11:00',
-  progress: 35
-}, {
-  id: 3,
-  title: 'Örnek Dosya 3',
-  fileNo: '0000/0000 E.',
-  court: 'Örnek Mahkeme',
-  status: 'closed',
-  nextDate: '—',
-  progress: 100
-}];
-const TIMELINE = [{
-  icon: 'gavel',
-  title: 'Duruşma günü verildi',
-  date: '14 Nisan 2026, 09:40',
-  note: 'Örnek Mahkeme · Duruşma salonu',
-  tone: 'pending'
-}, {
-  icon: 'file-text',
-  title: 'Bilirkişi raporu dosyaya girdi',
-  date: '28 Mart 2026',
-  note: 'Rapor lehimize; itiraz süresi 2 hafta.',
-  tone: 'info'
-}, {
-  icon: 'upload',
-  title: 'Cevaba cevap dilekçesi sunuldu',
-  date: '11 Mart 2026',
-  note: 'UYAP üzerinden gönderildi.',
-  tone: 'info'
-}, {
-  icon: 'check-circle-2',
-  title: 'Dava açıldı',
-  date: '2 Şubat 2026',
-  note: 'Harç ve masraflar yatırıldı.',
-  tone: 'success'
-}];
+// ── SAHTE DOSYA VERİSİ KALDIRILDI · 16.08.2026 ───────────────────────────────
+//  Burada CASES ve TIMELINE adında iki örnek dizi vardı ("Örnek Dosya",
+//  status:'hearing' → "Duruşma bekleniyor" rozeti, progress:62 → %62 çubuğu,
+//  unread:2, ve zaman çizelgesinde "Rapor lehimize; itiraz süresi 2 hafta").
+//
+//  ÜÇ AYRI SEBEPLE KALDIRILDI:
+//   1) Yön. m.7/c — "Rapor lehimize" lehte sonuç imasıdır; bu dosya kamuya
+//      açık bir JS varlığıdır (curl ile okunur), yayımlanmış sayılır.
+//   2) Yön. m.7/d — dava aşaması/rozeti kapalı listede yoktur.
+//   3) Av.K. m.34 — dosyası henüz işlenmemiş GERÇEK müvekkil, kendi
+//      ekranında bu uydurma kartı görüyordu. Müvekkile işinin durumu
+//      hakkında yanlış izlenim vermek, bilgi vermemekten ağırdır.
+//
+//  Yerine: veri yoksa dizi BOŞ kalır ve aşağıdaki dürüst boş durum çıkar.
+//  Bir daha örnek/temsilî dosya verisi EKLENMEYECEK — maket gerekiyorsa
+//  yayına çıkmayan ayrı bir dosyada tutulur.
+// ─────────────────────────────────────────────────────────────────────────────
+const CASES = [];
+const TIMELINE = [];
 function PortalScreen({
   go,
   muvekkil,
@@ -80,8 +48,11 @@ function PortalScreen({
     dosyalar: []
   };
   const DOSYALAR = mv.dosyalar && mv.dosyalar.length ? mv.dosyalar : CASES;
+  // CASES artık boş; dosyası işlenmemiş müvekkilde DOSYALAR = [] olur.
+  // active bilerek null olabilir — aşağıdaki her okuma optional chaining ile
+  // korunur ve dosya yoksa kart yerine dürüst boş durum gösterilir.
   const [tab, setTab] = React.useState('akis');
-  const [active, setActive] = React.useState(DOSYALAR[0]);
+  const [active, setActive] = React.useState(DOSYALAR[0] || null);
   const [draft, setDraft] = React.useState('');
   const [copied, setCopied] = React.useState(false);
   const [pay, setPay] = React.useState(false);
@@ -276,11 +247,35 @@ function PortalScreen({
     key: c.id
   }, c, {
     onClick: () => setActive(c),
-    style: active.id === c.id ? {
+    style: active && active.id === c.id ? {
       outline: '2px solid var(--ink-800)',
       outlineOffset: -1
     } : null
-  })))), /*#__PURE__*/React.createElement(Card, {
+  })))), !active ? /*#__PURE__*/React.createElement(Card, {
+    padding: "lg",
+    style: {
+      marginTop: 'var(--space-8)',
+      textAlign: 'center'
+    }
+  }, /*#__PURE__*/React.createElement("h2", {
+    style: {
+      fontSize: 'var(--text-title-3)',
+      marginBottom: 'var(--space-3)'
+    }
+  }, "Adınıza kayıtlı, portalda g\xF6r\xFCnt\xFClenebilir dosya bulunmuyor."), /*#__PURE__*/React.createElement("p", {
+    style: {
+      color: 'var(--text-muted)',
+      maxWidth: '52ch',
+      margin: '0 auto var(--space-3)'
+    }
+  }, "Dosya bilgileri b\xFCromuzca sisteme işlendik\xE7e bu alanda g\xF6r\xFCn\xFCr."), /*#__PURE__*/React.createElement("p", {
+    style: {
+      color: 'var(--text-faint)',
+      fontSize: 'var(--text-body-sm)',
+      maxWidth: '58ch',
+      margin: '0 auto'
+    }
+  }, "Bu ekran bilgilendirme ama\xE7lıdır; resm\xEE tebligat, s\xFCre ve usul işlemleri bakımından esas alınamaz.")) : /*#__PURE__*/React.createElement(Card, {
     padding: "none",
     style: {
       marginTop: 'var(--space-8)'
@@ -299,15 +294,15 @@ function PortalScreen({
     style: {
       fontSize: 'var(--text-title-2)'
     }
-  }, active.title), /*#__PURE__*/React.createElement(Tag, {
+  }, active.title || "—"), /*#__PURE__*/React.createElement(Tag, {
     icon: "scale"
-  }, active.court), /*#__PURE__*/React.createElement("span", {
+  }, active.court || "—"), /*#__PURE__*/React.createElement("span", {
     className: "mono",
     style: {
       color: 'var(--text-faint)',
       marginLeft: 'auto'
     }
-  }, active.fileNo)), /*#__PURE__*/React.createElement(Tabs, {
+  }, active.fileNo || "—")), /*#__PURE__*/React.createElement(Tabs, {
     style: {
       marginTop: 'var(--space-4)'
     },
@@ -342,7 +337,7 @@ function PortalScreen({
       flexDirection: 'column',
       gap: 0
     }
-  }, (active.akis ? active.akis.map(([icon, title, date, tone, note]) => ({
+  }, ((active && active.akis) ? active.akis.map(([icon, title, date, tone, note]) => ({
     icon,
     title,
     date,
@@ -765,7 +760,7 @@ function PortalScreen({
       marginTop: 'var(--space-3)',
       lineHeight: 'var(--leading-relaxed)'
     }
-  }, "A\xE7\u0131klama k\u0131sm\u0131na dosya numaran\u0131z\u0131 (", active.fileNo, ") yaz\u0131n; \xF6demeniz otomatik e\u015Fle\u015Fsin.")))), paid ? /*#__PURE__*/React.createElement("div", {
+  }, "A\xE7\u0131klama k\u0131sm\u0131na dosya numaran\u0131z\u0131 (", (active && active.fileNo) || "—", ") yaz\u0131n; \xF6demeniz otomatik e\u015Fle\u015Fsin.")))), paid ? /*#__PURE__*/React.createElement("div", {
     style: {
       position: 'fixed',
       right: 24,
