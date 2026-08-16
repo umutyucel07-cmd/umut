@@ -254,41 +254,7 @@ function ArticleDetail({
       color: 'var(--text-muted)',
       lineHeight: 'var(--leading-relaxed)'
     }
-  }, "Bu yaz\u0131 genel bilgilendirme amac\u0131yla haz\u0131rlanm\u0131\u015Ft\u0131r; somut olay\u0131n\u0131za uygulanacak hukuk, belgelerinize ve tarihlere g\xF6re de\u011Fi\u015Fir. Yaz\u0131n\u0131n tarihinden sonra mevzuat de\u011Fi\u015Fmi\u015F olabilir. Kendi dosyan\u0131z i\xE7in hukuki g\xF6r\xFC\u015F almadan i\u015Flem yapmay\u0131n.")))), /*#__PURE__*/React.createElement("section", {
-    style: {
-      padding: '0 var(--gutter-page-lg) var(--space-20)'
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      maxWidth: 760,
-      margin: '0 auto',
-      background: 'var(--ink-800)',
-      borderRadius: 'var(--radius-lg)',
-      padding: 'var(--space-8)',
-      display: 'flex',
-      alignItems: 'center',
-      gap: 'var(--space-6)'
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      flex: 1
-    }
-  }, /*#__PURE__*/React.createElement("h2", {
-    style: {
-      fontSize: 'var(--text-title-2)',
-      color: 'var(--paper-1)'
-    }
-  }, "Bu yaz\u0131 genel bilgilendirme ama\xE7l\u0131d\u0131r"), /*#__PURE__*/React.createElement("p", {
-    style: {
-      fontSize: 'var(--text-body-sm)',
-      color: 'var(--ink-100)',
-      marginTop: 6
-    }
-  }, "Her dosya kendi ko\u015Fullar\u0131na g\xF6re de\u011Ferlendirilir; bu metin hukuki g\xF6r\xFC\u015F yerine ge\xE7mez.")), /*#__PURE__*/React.createElement(Button, {
-    variant: "accent",
-    icon: "calendar-plus",
-    onClick: () => go('booking')
-  }, "Randevu Al"))));
+  }, "Bu yaz\u0131 genel bilgilendirme amac\u0131yla haz\u0131rlanm\u0131\u015Ft\u0131r; somut olay\u0131n\u0131za uygulanacak hukuk, belgelerinize ve tarihlere g\xF6re de\u011Fi\u015Fir. Yaz\u0131n\u0131n tarihinden sonra mevzuat de\u011Fi\u015Fmi\u015F olabilir. Kendi dosyan\u0131z i\xE7in hukuki g\xF6r\xFC\u015F almadan i\u015Flem yapmay\u0131n.")))));
 }
 function ArticlesScreen({
   go

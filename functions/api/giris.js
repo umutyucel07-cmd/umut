@@ -16,6 +16,9 @@
 //  yalnız KENDİ kaydını, yalnız doğru kodu girdikten sonra görür.
 // ============================================================================
 import { json, kodNormalize, kodAnahtari, biberAl, frenAsildiMi } from '../../lib/kimlik.js';
+// Büro kimlik + ödeme bilgileri. lib/ YAYINLANMAZ (beyaz listede yok) —
+// bu değerler yalnız buradan, yalnız doğrulanmış müvekkile gider.
+import { BURO_GIZLI } from '../../lib/buro-gizli.js';
 
 const OTURUM_GUN = 30;
 
@@ -126,5 +129,10 @@ export async function onRequest({ request, env }) {
       sicil: muvekkil.sicil || '',
       dosyalar: Array.isArray(muvekkil.dosyalar) ? muvekkil.dosyalar : [],
     },
+    // 16.08.2026 — büro kimlik ve ödeme bilgileri BURADAN iner.
+    // Önceden js/buro-bilgi.js içindeydi ve her sayfada herkese açıktı.
+    // Artık yalnız erişim kodu SUNUCUDA doğrulandıktan sonra, yalnız
+    // doğrulanmış müvekkile. Giriş yapmamış ziyaretçi bu yanıta ulaşamaz.
+    buro: BURO_GIZLI,
   });
 }

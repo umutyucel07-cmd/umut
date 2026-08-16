@@ -88,10 +88,20 @@ async function calistir() {
   kontrol('doğru kod ile giriş açılır', c.ok === true && c.muvekkil?.ad === 'Ayşe Yılmaz', JSON.stringify(c));
   kontrol('yanıtta telefon dönmez', !JSON.stringify(c).includes('5320000000'), JSON.stringify(c));
 
+  // ---- 5b. Büro kimlik/ödeme alanları: GİRİŞİN ARKASINDA (16.08.2026) ---
+  //  Bu alanlar 16.08'e kadar js/buro-bilgi.js içindeydi ve her sayfada
+  //  herkese açık iniyordu. Artık yalnız DOĞRULANMIŞ yanıtta dönüyorlar.
+  //  İki yönlü sınanır: doğru kodda GELMELİ, yanlış kodda GELMEMELİ.
+  kontrol('doğru kodda büro alanları döner', !!(c.buro && c.buro.iban && c.buro.tcNo), Object.keys(c.buro || {}).join(','));
+  kontrol('büro alanları eksiksiz döner',
+    ['tcNo', 'iban', 'ibanDuz', 'banka', 'ibanHesap', 'odemeLink'].every((k) => !!(c.buro || {})[k]),
+    Object.keys(c.buro || {}).join(','));
+
   // ---- 6. Yanlış kod: 401 ----------------------------------------------
   r = await giris({ request: istek({ kod: 'UY-2222-3333' }), env });
   c = await r.json();
   kontrol('yanlış kod reddedilir', r.status === 401 && c.durum === 'yok', `${r.status} ${JSON.stringify(c)}`);
+  kontrol('yanlış kodda büro alanları DÖNMEZ', !c.buro && !JSON.stringify(c).match(/iban|tcNo/i), JSON.stringify(c));
 
   // ---- 7. Biçimsiz kod: 400 --------------------------------------------
   r = await giris({ request: istek({ kod: 'saçma' }), env });

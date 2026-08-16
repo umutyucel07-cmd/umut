@@ -385,16 +385,23 @@ function HomeScreen({
       flexDirection: 'column',
       gap: 'var(--space-3)'
     }
-  }, /*#__PURE__*/React.createElement(CaseStatusCard, {
-    title: "\u00D6rnek Dosya",
-    fileNo: "0000/0000 E.",
-    court: "\u00D6rnek Mahkeme",
-    status: "hearing",
-    nextDate: "14 Nisan 2026, 09:40",
-    progress: 62,
-    unread: 2,
-    onClick: () => go('login')
-  }), /*#__PURE__*/React.createElement(MessageBubble, {
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      padding: 'var(--space-5)',
+      background: 'var(--surface-card)',
+      borderRadius: 'var(--radius-lg)',
+      border: '1px solid var(--border-subtle)'
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: { fontWeight: 600, marginBottom: 'var(--space-2)' }
+  }, "M\xFCvekkil portal\u0131"), /*#__PURE__*/React.createElement("p", {
+    style: {
+      color: 'var(--text-muted)',
+      lineHeight: 'var(--leading-relaxed)',
+      fontSize: 'var(--text-body-sm)',
+      margin: 0
+    }
+  }, "Vek\xE2let ili\u015Fkisi kurulan m\xFCvekkillerimize taraf\u0131m\u0131zca bir eri\u015Fim kodu bildirilir. Bu kod ile dosyan\u0131z\u0131n g\xFCncel durum bilgisine ve yakla\u015Fan duru\u015Fma g\xFCn\xFCne \xE7evrim i\xE7i ula\u015Fabilirsiniz. Dilek\xE7e, bilirki\u015Fi raporu ve mahkeme yaz\u0131\u015Fmalar\u0131 bu kanaldan payla\u015F\u0131lmaz.")), /*#__PURE__*/React.createElement(MessageBubble, {
     from: "ai",
     aiNote: "Bu bir \xF6n bilgilendirmedir; hukuki g\xF6r\xFC\u015F yerine ge\xE7mez."
   }, "Y\xFCkledi\u011Finiz ihtarnamede 7 g\xFCnl\xFCk cevap s\xFCresi g\xF6r\xFCn\xFCyor. Avukat\u0131n\u0131z 1 i\u015F g\xFCn\xFC i\xE7inde teyit edecek."))))), /*#__PURE__*/React.createElement("section", {

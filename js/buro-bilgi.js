@@ -5,7 +5,6 @@ window.BURO = {
   buro: 'Umut Yücel Hukuk Bürosu',
   baroSicil: '6448',
   tbbSicil: '160505',
-  tcNo: '18116177394',
   tel: '0531 735 63 82',
   telHref: 'tel:+905317356382',
   mail: 'umutyucel07@gmail.com',
@@ -14,11 +13,6 @@ window.BURO = {
   adresKisa: 'Meltem Mah. İ. B. Sürelsan Cad. No:21 K:8 D:25, Muratpaşa',
   tarif: 'Gobu Cafe üstü, Güneş Fırını yanı',
   harita: 'https://www.google.com/maps/search/?api=1&query=Meltem+Mah.+%C4%B0smail+Baha+S%C3%BCrelsan+Cad.+No:21+Murat%C5%9Fa+Antalya',
-  odemeLink: 'https://pos.mokaunited.com/CustomerPos/PaymentRequest?uppc=%2bTFuwp08UTmoxr2BuxPp6g%3d%3d',
-  banka: 'T.C. Vakıflar Bankası T.A.O.',
-  ibanHesap: 'UMUT YÜCEL',
-  iban: 'TR08 0001 5001 5800 7307 2879 94',
-  ibanDuz: 'TR080001500158007307287994',
   site: 'avumutyucelhukuk.com',
   siteUrl: 'https://avumutyucelhukuk.com',
   instagram: 'https://www.instagram.com/av.umuttyucel?utm_source=qr',
@@ -35,6 +29,20 @@ window.BURO = {
   driveLink: null,
   linkedin: 'https://www.linkedin.com/in/umut-y%C3%BCcel-2210841a4',
   linkedinAd: 'Umut Yücel',
+  // ── GİZLİ ALANLAR BURADA DEĞİL (16.08.2026) ─────────────────────────────
+  //  tcNo · iban · ibanDuz · banka · ibanHesap · odemeLink → lib/buro-gizli.js
+  //  Bu dosya HER SAYFADA tarayıcıya iner. Ad + T.C. kimlik + IBAN bir arada
+  //  yayınlandığında, birebir doğru görünen sahte bir ödeme talimatı kurmaya
+  //  yeter. Bu alanlar artık yalnız /api/giris ucundan, erişim kodu SUNUCUDA
+  //  doğrulandıktan sonra iniyor; js/oturum.js oturuma yazıyor ve
+  //  window.BURO üzerine ekliyor.
+  //
+  //  Giriş yapılmamışsa window.BURO.tcNo ve IBAN alanları TANIMSIZDIR.
+  //  Okuyan her yer window.BURO.girisGerekli() ile önce sormalıdır.
+  girisGerekli: function () {
+    return !this.iban;
+  },
+
   vekalet: 'En yakın notere gidip “genel avukatlık vekâletnamesi” demeniz yeterlidir. Vekâletin düz, dik ve okunaklı fotoğrafı ya da PDF taraması işimizi görür.'
 };
 
