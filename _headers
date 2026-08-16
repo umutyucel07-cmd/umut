@@ -4,6 +4,31 @@
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: geolocation=(), microphone=(), camera=()
   Strict-Transport-Security: max-age=31536000; includeSubDomains
+  Content-Security-Policy-Report-Only: default-src 'self'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' https://cloudflareinsights.com; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
+
+# ── CSP hakkında ────────────────────────────────────────────────────────────
+# Şu an **Report-Only**: tarayıcı ihlalleri konsola yazar, HİÇBİR ŞEYİ
+# ENGELLEMEZ. Bilerek böyle: politika gerçek bir tarayıcıda doğrulanamadı
+# (bulut konteynerinde sayfa proxy arkasında yüklenmedi), doğrulanmamış bir
+# CSP'yi zorlayıcı koymak canlı siteyi kırabilirdi.
+#
+# Politika ölçülen gerçeğe dayanıyor: sitenin bütün kaynakları aynı origin.
+# JS içindeki dış adresler (mevzuat.gov.tr, barobirlik, UYAP, wa.me, sosyal
+# medya) bağlantı HEDEFİdir, yüklenen kaynak değildir — CSP'yi ilgilendirmez.
+# Tek gerçek dış kaynak Cloudflare analytics beacon'ıdır, izin verildi.
+#
+# 'unsafe-inline' zorunlu: index.html içinde satır içi <script> ve <style>
+# blokları var. Kaldırılması için hash veya nonce gerekir; bu bir derleme
+# değişikliğidir, ayrı bir iştir. Buna rağmen politika şunları kapatıyor:
+# dış kaynaktan script yükleme, <base> kaçırma, form verisinin dış adrese
+# gönderilmesi, çerçeveye alınma (clickjacking), eklenti/nesne yükleme.
+#
+# ZORLAYICIYA GEÇİŞ: siteyi tarayıcıda açın, DevTools → Console. "Report
+# Only" uyarısı yoksa aşağıdaki başlık adından **-Report-Only** ekini silmek
+# yeterlidir. Uyarı varsa önce o kaynaklar politikaya eklenir.
+#
+# NOT: frame-ancestors 'none', X-Frame-Options: SAMEORIGIN'den daha katıdır.
+# Zorlayıcıya geçilirse site hiçbir yerde çerçeveye alınamaz — istenen budur.
 
 # Sürüm numarası dosya adında — içerik asla değişmez, bir yıl önbelleklenebilir.
 # Kütüphane güncellenirse DOSYA ADI da değişir, bayat kopya riski yoktur.
@@ -16,3 +41,10 @@
   X-Robots-Tag: noindex, nofollow, noarchive
 /tools/*
   X-Robots-Tag: noindex, nofollow, noarchive
+
+# ── 16.08.2026 bulgusu ────────────────────────────────────────────────────
+# Bu başlıklar yalnız YENİ yanıtlara uygulanır. Kenar önbelleğinde duran
+# eski kopyaları değiştirmez. 16.08'de ölçüldü: /COPILOT-YAYIN.md,
+# /tools/yayin-hazirla.sh ve /.env.example ~69 saatlik önbellek kayıtlarından
+# hâlâ sunuluyordu (origin temiz olduğu hâlde). Çözümü başlık değil, ÖNBELLEK
+# TEMİZLİĞİdır: Cloudflare → Caching → Configuration → Purge Cache.

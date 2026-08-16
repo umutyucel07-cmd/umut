@@ -58,10 +58,10 @@
 
   var DILLER = [['tr', 'Türkçe'], ['en', 'English'], ['ru', 'Русский'], ['de', 'Deutsch'], ['ar', 'العربية']];
   var DIL_METIN = {
-    en: { b: 'Legal services in Antalya', p: 'Our office provides representation and advisory services in labour law, tenancy and real estate disputes, enforcement proceedings, family law and contract law. Consultations are held at our office, by video call or by telephone; the first fifteen minutes are free of charge. Correspondence in English is welcome.', c: 'Request an appointment' },
-    ru: { b: 'Юридические услуги в Анталье', p: 'Наше бюро оказывает юридическую помощь по трудовым спорам, аренде и недвижимости, исполнительному производству, семейному и договорному праву. Консультации проводятся в офисе, по видеосвязи или по телефону; первые пятнадцать минут бесплатны. Возможна переписка на русском языке.', c: 'Записаться на приём' },
-    de: { b: 'Rechtsberatung in Antalya', p: 'Unsere Kanzlei vertritt und berät in den Bereichen Arbeitsrecht, Miet- und Immobilienrecht, Zwangsvollstreckung, Familienrecht und Vertragsrecht. Beratungen finden in der Kanzlei, per Videogespräch oder telefonisch statt; die ersten fünfzehn Minuten sind kostenfrei. Korrespondenz auf Deutsch ist möglich.', c: 'Termin vereinbaren' },
-    ar: { b: 'خدمات قانونية في أنطاليا', p: 'يقدّم مكتبنا التمثيل والاستشارة في قانون العمل، ونزاعات الإيجار والعقارات، والتنفيذ والإفلاس، وقانون الأسرة، وقانون العقود. تُعقد الاستشارات في المكتب أو عبر مكالمة مرئية أو هاتفياً، وأول خمس عشرة دقيقة مجانية. يمكن المراسلة باللغة العربية.', c: 'طلب موعد' },
+    en: { b: 'Legal services in Antalya', p: 'Our office provides representation and advisory services in labour law, tenancy and real estate disputes, enforcement proceedings, family law and contract law. Consultations are held at our office, by video call or by telephone. Correspondence in English is welcome.', c: 'Request an appointment' },
+    ru: { b: 'Юридические услуги в Анталье', p: 'Наше бюро оказывает юридическую помощь по трудовым спорам, аренде и недвижимости, исполнительному производству, семейному и договорному праву. Консультации проводятся в офисе, по видеосвязи или по телефону. Возможна переписка на русском языке.', c: 'Записаться на приём' },
+    de: { b: 'Rechtsberatung in Antalya', p: 'Unsere Kanzlei vertritt und berät in den Bereichen Arbeitsrecht, Miet- und Immobilienrecht, Zwangsvollstreckung, Familienrecht und Vertragsrecht. Beratungen finden in der Kanzlei, per Videogespräch oder telefonisch statt. Korrespondenz auf Deutsch ist möglich.', c: 'Termin vereinbaren' },
+    ar: { b: 'خدمات قانونية في أنطاليا', p: 'يقدّم مكتبنا التمثيل والاستشارة في قانون العمل، ونزاعات الإيجار والعقارات، والتنفيذ والإفلاس، وقانون الأسرة، وقانون العقود. تُعقد الاستشارات في المكتب أو عبر مكالمة مرئية أو هاتفياً. يمكن المراسلة باللغة العربية.', c: 'طلب موعد' },
   };
 
   function DilSecici(props) {

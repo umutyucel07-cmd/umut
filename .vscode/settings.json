@@ -1,0 +1,50 @@
+{
+  // ── Av. Umut Yücel — avumutyucelhukuk.com · CANLI DEPO ──
+  // main'e push = anında yayın. Staging yok. Kurallar: .github/copilot-instructions.md
+
+  // ── Yapı adımı yok: otomatik biçimlendirme index.html'i bozar ──
+  // index.html'in sıkışık yapısı bilinçlidir; JSON-LD ve <noscript> blokları
+  // sitenin Google dizininde kalmasını sağlıyor. Prettify bunları bozabilir.
+  "editor.formatOnSave": false,
+  "editor.formatOnPaste": false,
+  "[html]": { "editor.formatOnSave": false },
+  "[javascript]": { "editor.formatOnSave": false },
+  "[css]": { "editor.formatOnSave": false },
+  "[json]": { "editor.formatOnSave": false },
+
+  // ── Üretilmiş dosyalar: elle düzenlenmez ──
+  // js/ altında yalnız varliklar.js elle düzenlenebilir. Diğerleri derleyici çıktısı.
+  "files.readonlyInclude": {
+    "js/components.js": true,
+    "vendor/**": true
+  },
+
+  // ── Copilot bu depoda talimat dosyasını okusun ──
+  "github.copilot.chat.codeGeneration.useInstructionFiles": true,
+
+  // ── Gizli dosyalar görünür kalsın ki yanlışlıkla commit edilmesin ──
+  "files.exclude": {
+    "**/.DS_Store": true
+  },
+
+  // ── Arama: üretilmiş ve büyük klasörleri atla ──
+  "search.exclude": {
+    "vendor/**": true,
+    "assets/**": true,
+    "_site/**": true,
+    ".wrangler/**": true
+  },
+
+  // ── Satır sonu ve kodlama sabit: platform farkı diff gürültüsü yapmasın ──
+  "files.eol": "\n",
+  "files.encoding": "utf8",
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true,
+  "[markdown]": { "files.trimTrailingWhitespace": false },
+
+  // ── Git: push kararı insanda kalsın ──
+  "git.confirmSync": true,
+  "git.enableSmartCommit": false,
+  "git.postCommitCommand": "none",
+  "git.autofetch": false
+}
