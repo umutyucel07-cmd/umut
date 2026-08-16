@@ -386,9 +386,9 @@ function HomeScreen({
       gap: 'var(--space-3)'
     }
   }, /*#__PURE__*/React.createElement(CaseStatusCard, {
-    title: "K\u0131dem Tazminat\u0131 Davas\u0131",
-    fileNo: "2025/418 E.",
-    court: "Antalya 3. \u0130\u015F Mah.",
+    title: "\u00D6rnek Dosya",
+    fileNo: "0000/0000 E.",
+    court: "\u00D6rnek Mahkeme",
     status: "hearing",
     nextDate: "14 Nisan 2026, 09:40",
     progress: 62,
