@@ -1,0 +1,14 @@
+{
+  "recommendations": [
+    "github.copilot",
+    "github.copilot-chat"
+  ],
+
+  // Biçimlendirici eklentiler bilerek önerilmiyor: bu depoda yapı adımı yok,
+  // index.html'in yapısı elle korunuyor. Prettier kurulursa kaydetme anında
+  // JSON-LD ve <noscript> bloklarını bozabilir.
+  "unwantedRecommendations": [
+    "esbenp.prettier-vscode",
+    "hookyqr.beautify"
+  ]
+}
