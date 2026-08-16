@@ -228,8 +228,8 @@ function UygulamaScreen({
       flexDirection: 'column',
       gap: 'var(--space-3)'
     }
-  }, [['Örnek Dosya', '0000/0000 E.', 62], ['Örnek Dosya 2', '0000/0000 E.', 35]].map(([t, n, pr]) => /*#__PURE__*/React.createElement("div", {
-    key: n,
+  }, [['Eri\u015Fim kodu ile giri\u015F', 'Kod, vek\xE2let ili\u015Fkisi kuruldu\u011Funda taraf\u0131m\u0131zca bildirilir.'], ['Dosya durumu', 'Yaln\u0131z durum bilgisi ve yakla\u015Fan duru\u015Fma g\xFCn\xFC g\xF6r\xFCn\xFCr.'], ['Belge payla\u015F\u0131m\u0131', 'Belge bu kanaldan payla\u015F\u0131lmaz; KEP ya da WhatsApp kullan\u0131l\u0131r.']].map(([t, aciklama]) => /*#__PURE__*/React.createElement("div", {
+    key: t,
     style: {
       padding: 'var(--space-3)',
       background: 'var(--surface-card)',
@@ -244,27 +244,13 @@ function UygulamaScreen({
       color: 'var(--text-heading)'
     }
   }, t), /*#__PURE__*/React.createElement("div", {
-    className: "mono",
     style: {
       fontSize: 9,
       color: 'var(--text-faint)',
-      marginTop: 2
+      marginTop: 3,
+      lineHeight: 1.45
     }
-  }, n), /*#__PURE__*/React.createElement("div", {
-    style: {
-      height: 3,
-      borderRadius: 999,
-      background: 'var(--paper-3)',
-      marginTop: 8,
-      overflow: 'hidden'
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      width: pr + '%',
-      height: '100%',
-      background: 'var(--brass-500)'
-    }
-  })))), /*#__PURE__*/React.createElement("div", {
+  }, aciklama))), /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'flex',
       gap: 6
