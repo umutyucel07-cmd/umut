@@ -286,3 +286,65 @@ tek durum, bir sır değerinin **Copilot’tan** istenmesidir — bu paket bunu 
 `KOPILOT-YAYIN-PAKETI-14-08.md` → çelişkide bu bölüm → sonra üstteki genel kurallar.
 `00-DURDUR-WEBHOOK-GOREVI.md` teşhis olarak hâlâ geçerli; onun yasakladığı şey **yeni uç
 kurmak**tı — bu paket yeni uç kurmaz, mevcut Worker’a işaret eder.
+
+## ⚙️ Model ve kaynak politikası (14.08.2026 — avukat talimatı, kalıcı)
+
+Ortak hafızanın 10. değişmez kuralı; Copilot dahil tüm yardımcılar uyar:
+
+- **Düşünme işleri** (plan, tasarım, mimari karar, akıl yürütme, denetim,
+  doğrulama): kullanılabilir EN GÜÇLÜ modelde, azami özenle yapılır. Model
+  seçimi elindeyse en üst katmanı seç; değilse işi yine de durdurma.
+- **İşçi işleri** (tarama, dönüştürme, toplu düzenleme, şablon işi): işi
+  kusursuz yapabilen EN EKONOMİK yolla yapılır; gereksiz dosya okuma,
+  gereksiz koşu, gereksiz çıktı üretme.
+- **İş asla durmaz:** kaynak/limit engelinde bir alt katmana düşülür ve
+  sürdürülür; "model yok" diye iş bekletilmez.
+- Ölçüt: jeton/kaynak cimriliği + doğru, gerçek, eksiksiz iş. Çatışırsa
+  doğruluk kazanır.
+
+## 🔐 Kredensiyel Kasası (14.08.2026, kalıcı)
+
+Bir sır DEĞERİ (jeton/şifre/2FA/API-anahtarı) gerektiğinde: değeri isteme,
+sohbete/dosyaya/loga yazma. "KASA FİŞİ" üret (hangi değer, nereden kopyala
+düğmesiyle, nereye), avukata devret; avukat "girdim" deyince ETKİYLE doğrula
+(test/HTTP kodu), değeri görmeden sürdür. ~/Desktop/KASA/ Claude'a kapalıdır.
+
+## 🤖 Uygulayıcı Ajan Düzeni (14.08.2026 — avukat talimatı, kalıcı; kural 13)
+
+Rol dağılımı: **Claude** = strateji/mimari/denetim (görev paketini üretir);
+**Copilot + Cline** = uygulayıcı (paketi VS Code'da yerel uygular);
+**avukat** = komutan (kod yazmaz; hazır emri yapıştırır, onaylar).
+
+Paket standardı — Claude'dan gelen her görev evrakı 4 parça içerir:
+(1) klasör/dosya ağacı, (2) kurulum komutları tek blok (Apple Silicon),
+(3) Copilot/Cline'a yapıştırılacak KESİN EMİR metni, (4) doğrulama
+komutu + beklenen çıktı. Evrak adları: `COPILOT-*.md` / `AJAN-GOREV-*.md`.
+
+Sınırlar (Copilot ve Cline için MUTLAK):
+- Cline **auto-approve KAPALI**; her dosya yazımı/terminal komutu avukat onayıyla.
+- Sır değerleri (API anahtarı, jeton) dosyaya/settings.json'a/repoya YAZILMAZ;
+  gerektiğinde KASA FİŞİ akışı (üstteki bölüm) — terminalde `read -rs`.
+- Müvekkil dosyalarının İÇERİĞİ (PDF/Word metni, ad, TC) bulut ajan
+  bağlamına (Copilot/Cline sohbeti) VERİLMEZ. Ajan yalnız KODU yazar;
+  kod müvekkil verisini YERELDE işler, içerik ve sonuç Mac'te kalır.
+- BİST verisi resmî/izinli kaynaktan (Borsa MCP, KAP); yatırım
+  platformlarında (Midas vb.) EMİR/İŞLEM OTOMASYONU KURULMAZ — sinyal
+  yalnız bilgilendirme, karar avukatın.
+- Dışa dönük her çıktı reklam yasağı denetiminden geçer (üst bölümler).
+
+### 🔁 Uygulayıcı Ajan Düzeni V2 (14.08 — Gemini geliştirmesi denetlenerek eklendi)
+- **İzole ortam:** her Python/Node işi `.venv`/conda içinde; kurulum bloğu izole ortam aktivasyonuyla başlar (global ortam bozulmaz).
+- **Commit güvencesi (onay bekleyen):** 4. adım doğrulaması geçince ajan git commit HAZIRLAR; avukat "onayla" demeden commit/push YOK; `--no-verify` YASAK (kancalar çalışır); mesaj Türkçe; push elle.
+- **Anonim hata logu:** ajan hatası buluta iletilmeden önce müvekkil verisi maskelenir → TC(11 hane)/telefon(05xx,+90)/ad-soyad/müvekkil dosya yolu `XXXX`. Ön-filtre: `sed -E 's/[0-9]{11}/XXXX/g; s/(\+90|0)5[0-9]{9}/XXXX/g'`.
+- **.gitignore güvencesi:** `.venv .env node_modules *.pem *token*` + müvekkil veri dizinleri gitignore'da; commit güvencesi bunları asla eklemez.
+
+## 🎯 GİZLİ SİLAH V4 (14.08 — final; kural 13 evrildi)
+Tam belge: `05_Bellek_Arsivi/GIZLI-SILAH-V4-FINAL.md`. Çekirdek: `.clinerules` + `.clineignore`.
+- **Risk matrisi:** R0/R1 otomatik · R2 komutan onayı (Komuta Merkezi 🔴 kuyruğu) · R3 çift onay/manuel (UYAP/e-imza/finansal/toplu silme) · R4 yasak (sır/finansal otomasyon/güvenlik aşma).
+- **Zincir:** Komutan(insan) → Orchestrator(ana akıl) → kurulu uzman ajanlar → Cline/Copilot uygulayıcı. Yeni ajan icat etme; kataloğu kullan.
+- **Hukuk red-team/verifier = isimli ajanlar:** ictihat-arastirmaci, dilekce-denetci, karsi-taraf-avukati, sure-denetcisi, reklam-yasagi-denetcisi. MCP: Yarg.
+- **BIST = karar destek:** hisse-analisti, ayi-tezi, tarama-motoru; MCP: Borsa; emir otomasyonu YOK (R4).
+- **Halüsinasyon kilidi:** doğrulanamayan → "STOP — DOĞRULANAMADI".
+- **Model (kural 10):** orchestrator/mimar üst katman; uygulayıcı ekonomik katman.
+- **Audit log yerel + maskeli;** müvekkil verisi buluta çıkmaz.
+- Sonuç başlığı: DURUM · RİSK · GÜVEN · KAYNAK.
