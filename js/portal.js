@@ -20,26 +20,26 @@ const {
 } = window.LexaHukukDesignSystem_93e85e;
 const CASES = [{
   id: 1,
-  title: 'Kıdem Tazminatı Davası',
-  fileNo: '2025/418 E.',
-  court: 'Antalya 3. İş Mah.',
+  title: 'Örnek Dosya',
+  fileNo: '0000/0000 E.',
+  court: 'Örnek Mahkeme',
   status: 'hearing',
   nextDate: '14 Nisan 2026, 09:40',
   progress: 62,
   unread: 2
 }, {
   id: 2,
-  title: 'Kira Tespit Davası',
-  fileNo: '2025/1120 E.',
-  court: 'Antalya 8. Sulh Hukuk',
+  title: 'Örnek Dosya 2',
+  fileNo: '0000/0000 E.',
+  court: 'Örnek Mahkeme',
   status: 'active',
   nextDate: '2 Mayıs 2026, 11:00',
   progress: 35
 }, {
   id: 3,
-  title: 'Trafik Kazası Tazminatı',
-  fileNo: '2024/77 E.',
-  court: 'Antalya 2. Asliye Hukuk',
+  title: 'Örnek Dosya 3',
+  fileNo: '0000/0000 E.',
+  court: 'Örnek Mahkeme',
   status: 'closed',
   nextDate: 'Karar tebliğ edildi',
   progress: 100
@@ -48,7 +48,7 @@ const TIMELINE = [{
   icon: 'gavel',
   title: 'Duruşma günü verildi',
   date: '14 Nisan 2026, 09:40',
-  note: 'Antalya 3. İş Mahkemesi · Duruşma salonu 2',
+  note: 'Örnek Mahkeme · Duruşma salonu',
   tone: 'pending'
 }, {
   icon: 'file-text',

@@ -228,7 +228,7 @@ function UygulamaScreen({
       flexDirection: 'column',
       gap: 'var(--space-3)'
     }
-  }, [['Kıdem Tazminatı Davası', '2025/418 E.', 62], ['Kira Tespit Davası', '2025/1120 E.', 35]].map(([t, n, pr]) => /*#__PURE__*/React.createElement("div", {
+  }, [['Örnek Dosya', '0000/0000 E.', 62], ['Örnek Dosya 2', '0000/0000 E.', 35]].map(([t, n, pr]) => /*#__PURE__*/React.createElement("div", {
     key: n,
     style: {
       padding: 'var(--space-3)',
