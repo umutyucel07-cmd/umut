@@ -19,19 +19,21 @@
 //  Parola KODA YAZILMAZ. Ortam değişkeninden okunur; değerini avukat kendi
 //  girer (kural 15). Bu dosyada, bu depoda ve sohbette hiçbir zaman bulunmaz.
 //
-//  ── AVUKATIN YAPACAĞI (bir kez) ───────────────────────────────────────────
+//  ── AVUKATIN YAPACAĞI (bir kez) ──────────────────────────────────────────
 //  Cloudflare → Workers & Pages → avumutyucelhukuk → Settings →
 //  Variables and Secrets → Add
 //      Ad    : PANEL_PAROLA
 //      Değer : (kasadan, uzun ve benzersiz bir parola)
-//  Production ve Preview ortamlarının İKİSİNE de eklenmeli — aksi hâlde
-//  pages.dev önizleme adresleri 503 verir.
+//  Production ve Preview ortamlarının İKİSİNE de eklenmeli.
+//  ⚠️ Yeni değişken ancak YENİ BİR DAĞITIMDAN sonra geçerli olur:
+//     Deployments → en son dağıtım → ⋯ → Retry deployment
 //
 //  Giriş: kullanıcı adı "avukat", parola yukarıdaki değer.
 //  Tarayıcı hatırlar; her açılışta sorulmaz.
 // ============================================================================
 
 const KULLANICI = 'avukat';
+const DEGISKEN = 'PANEL_PAROLA';
 
 // Sabit zamanlı karşılaştırma — erken çıkış yok, parola tahmininde zamanlama
 // sızıntısı oluşmasın. (Uzunluk farkı sızar; kabul edilebilir.)
@@ -61,15 +63,49 @@ function kimlikIste() {
   });
 }
 
+// ── Tanı ─────────────────────────────────────────────────────────────────
+// "Parola tanımlı değil" tek başına hangi hatanın yapıldığını söylemiyordu.
+// Bu işlev sebebi ayırt eder. HİÇBİR değişken ADI ve HİÇBİR DEĞER yazılmaz —
+// yalnız bir sayı ve bir sınıf bilgisi döner.
+function taniMetni(env) {
+  let adlar = [];
+  try {
+    adlar = Object.keys(env || {});
+  } catch {
+    return 'Ortam değişkenleri okunamadı.';
+  }
+
+  if (adlar.length === 0) {
+    return 'Bu dağıtım HİÇBİR ortam değişkeni görmüyor.\n' +
+           '→ Değişken eklendikten SONRA yeniden dağıtım gerekir:\n' +
+           '  Deployments → en son dağıtım → ⋯ → Retry deployment';
+  }
+
+  if (adlar.includes(DEGISKEN)) {
+    return `${DEGISKEN} tanımlı ama DEĞERİ BOŞ.\n` +
+           '→ Değişkeni silip değerini yeniden girin, sonra Retry deployment.';
+  }
+
+  const benzer = adlar.some((a) => a.trim().toUpperCase() === DEGISKEN);
+  if (benzer) {
+    return 'Adı benzeyen bir değişken var ama birebir eşleşmiyor.\n' +
+           `→ Ad tam olarak ${DEGISKEN} olmalı: büyük harf, alt çizgi, başta/sonda boşluk yok.`;
+  }
+
+  return `Bu dağıtım ${adlar.length} ortam değişkeni görüyor ama ${DEGISKEN} aralarında yok.\n` +
+         '→ Muhtemelen yanlış ortama eklendi. Production ve Preview ayrı listelerdir;\n' +
+         '  bu adres Production ortamını kullanıyor. Ekledikten sonra Retry deployment.';
+}
+
 export async function onRequest(context) {
   const { request, env, next } = context;
 
   // ── Kapalı başarısız ─────────────────────────────────────────────────────
-  const parola = env && env.PANEL_PAROLA;
+  const parola = env && env[DEGISKEN];
   if (!parola) {
     return new Response(
-      'Panel geçici olarak kapalı: PANEL_PAROLA tanımlı değil.\n' +
-      'Cloudflare → Pages projesi → Settings → Variables and Secrets\n',
+      'Panel kapalı — kimlik kapısı çalışıyor, içerik sunulmuyor.\n\n' +
+      'TANI:\n' + taniMetni(env) + '\n',
       {
         status: 503,
         headers: { ...GUVENLIK_BASLIKLARI, 'Content-Type': 'text/plain; charset=utf-8' },
@@ -96,7 +132,7 @@ export async function onRequest(context) {
   const kullanici = cozulmus.slice(0, ayrac);
   const girilen = cozulmus.slice(ayrac + 1);
 
-  // İki karşılaştırma da her zaman çalışsın — || kısa devre yapmasın.
+  // İki karşılaştırma da her zaman çalışsın — && kısa devre yapmasın.
   const kullaniciTamam = esitMi(kullanici, KULLANICI);
   const parolaTamam = esitMi(girilen, parola);
   if (!(kullaniciTamam && parolaTamam)) return kimlikIste();
