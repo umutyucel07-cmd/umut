@@ -35,8 +35,6 @@ window.BURO = {
   driveLink: null,
   linkedin: 'https://www.linkedin.com/in/umut-y%C3%BCcel-2210841a4',
   linkedinAd: 'Umut Yücel',
-  // Avukat panelini açarken sorulan kod. Değiştirmek için bu satırı düzenlemeniz yeterlidir.
-  panelKodu: '6448',
   vekalet: 'En yakın notere gidip “genel avukatlık vekâletnamesi” demeniz yeterlidir. Vekâletin düz, dik ve okunaklı fotoğrafı ya da PDF taraması işimizi görür.'
 };
 
