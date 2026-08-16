@@ -7,7 +7,6 @@ const {
   Badge,
   Icon,
   PracticeAreaCard,
-  CaseStatusCard,
   MessageBubble
 } = window.LexaHukukDesignSystem_93e85e;
 const OZEL_HUKUK = [{

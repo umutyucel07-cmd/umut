@@ -132,10 +132,16 @@ function BuroScreen({
       marginTop: 'var(--space-8)'
     }
   }, /*#__PURE__*/React.createElement(Button, {
-    variant: "accent",
+    // 16.08.2026 — reklam yasağı denetimi: "accent" idi, "secondary" yapıldı ve
+    // metin emir kipinden ("Randevu Al") işlev adına çevrildi. Gerekçe: kamuya
+    // açık sayfada vurgulu emir kipi düğme, m.7/d'nin izin verdiği statik
+    // iletişim bilgisi olmaktan çıkıp m.7/c anlamında eylem çağrısına yaklaşıyor.
+    // Kanal kalıyor, çağrı tonu kalkıyor. Portal içindeki (giriş arkası) aynı
+    // düğme dokunulmadı — orada vekâlet ilişkisi zaten kurulmuş.
+    variant: "secondary",
     icon: "calendar-plus",
     onClick: () => go('booking')
-  }, "Randevu Al"), /*#__PURE__*/React.createElement(Button, {
+  }, "Randevu talebi"), /*#__PURE__*/React.createElement(Button, {
     variant: "secondary",
     icon: "message-square",
     onClick: () => go('login')
