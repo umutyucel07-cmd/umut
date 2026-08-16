@@ -49,3 +49,6 @@ secrets*
 *.pem
 *.key
 *.p12
+
+# yerel Wrangler durumu (commit edilmez)
+.wrangler/
