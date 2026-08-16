@@ -41,7 +41,7 @@ const CASES = [{
   fileNo: '0000/0000 E.',
   court: 'Örnek Mahkeme',
   status: 'closed',
-  nextDate: 'Karar tebliğ edildi',
+  nextDate: '—',
   progress: 100
 }];
 const TIMELINE = [{
@@ -503,17 +503,17 @@ function PortalScreen({
     }
   }, [{
     n: 'Vekâlet ücreti — 1. taksit',
-    a: '12.500 ₺',
+    a: '—',
     d: '14.02.2026',
     s: 'paid'
   }, {
     n: 'Bilirkişi masrafı',
-    a: '2.400 ₺',
+    a: '—',
     d: '28.03.2026',
     s: 'paid'
   }, {
     n: 'Vekâlet ücreti — 2. taksit',
-    a: '12.500 ₺',
+    a: '—',
     d: '30.04.2026',
     s: 'due'
   }].map((r, i) => /*#__PURE__*/React.createElement("div", {
@@ -601,7 +601,7 @@ function PortalScreen({
       color: 'var(--text-heading)',
       fontWeight: 500
     }
-  }, "12.500 \u20BA"))) : /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+  }, "\u2014"))) : /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'flex',
       gap: 'var(--space-3)',
@@ -632,7 +632,7 @@ function PortalScreen({
   })))), /*#__PURE__*/React.createElement(Dialog, {
     open: pay,
     title: "\xD6deme",
-    description: "Vek\xE2let \xFCcreti \u2014 2. taksit \xB7 12.500 \u20BA",
+    description: "Vek\xE2let \xFCcreti \u2014 2. taksit",
     width: 540,
     onClose: () => setPay(false),
     footer: /*#__PURE__*/React.createElement(Button, {

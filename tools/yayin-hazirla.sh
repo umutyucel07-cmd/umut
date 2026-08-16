@@ -137,6 +137,16 @@ if [ -f "$CIKTI/js/varliklar.js" ]; then
   [ "$VB" -ge 2000 ] && { echo "❌ varliklar.js $VB bayt (gömülü sürüm)"; hata=1; }
 fi
 
+# ── Reklam yasağı + sızıntı taraması — YAYIN DİZİNİ ÜZERİNDE ────────────────
+#  13.08 dersi: "Kanca TEK BAŞINA YETMİYOR — yayın akışının kendisi denetimi
+#  çağırmalı." Kanca --no-verify ile atlanabilir; burası atlanamaz.
+#  Taramanın _site üzerinde koşması bilinçli: yayına GİDEN dosyalar denetlenir,
+#  depodaki yedek/kaynak kopyalar değil.
+if [ -f tools/reklam-sizinti-denetle.sh ]; then
+  echo "  reklam yasağı + sızıntı taraması ($CIKTI)…"
+  bash tools/reklam-sizinti-denetle.sh "$CIKTI" || hata=1
+fi
+
 [ "$hata" -eq 1 ] && exit 1
 
 echo "✅ yayın dizini hazır: $CIKTI"

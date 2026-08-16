@@ -278,13 +278,13 @@ function ArticleDetail({
       fontSize: 'var(--text-title-2)',
       color: 'var(--paper-1)'
     }
-  }, "Bu konu sizin dosyan\u0131za da uyuyor mu?"), /*#__PURE__*/React.createElement("p", {
+  }, "Bu yaz\u0131 genel bilgilendirme ama\xE7l\u0131d\u0131r"), /*#__PURE__*/React.createElement("p", {
     style: {
       fontSize: 'var(--text-body-sm)',
       color: 'var(--ink-100)',
       marginTop: 6
     }
-  }, "15 dakikal\u0131k \xF6n g\xF6r\xFC\u015Fmede belgelerinizi birlikte de\u011Ferlendirelim.")), /*#__PURE__*/React.createElement(Button, {
+  }, "Her dosya kendi ko\u015Fullar\u0131na g\xF6re de\u011Ferlendirilir; bu metin hukuki g\xF6r\xFC\u015F yerine ge\xE7mez.")), /*#__PURE__*/React.createElement(Button, {
     variant: "accent",
     icon: "calendar-plus",
     onClick: () => go('booking')
