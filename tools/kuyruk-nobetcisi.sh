@@ -22,10 +22,11 @@
 # ============================================================================
 export PATH="/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin"
 set -u
-# wrangler hesap baglamini repo kokunden alir — betik nereden cagrilirsa
-# cagrilsin oraya gecilir (16.08 tohum turunda olculen ders: cd olmadan
-# liste BOS donuyor ve nobetci kor kaliyor).
-cd "$(dirname "$0")/.." || exit 1
+# launchd, TCC korumasi nedeniyle ~/Documents'i OKUYAMAZ (16.08'de olculdu:
+# exit 127 / "can't open input file"). Bu calisir kopya bu yuzden ~/.uy-nobet
+# altinda durur ve wrangler hesap baglamini dizinden degil env'den alir.
+export CLOUDFLARE_ACCOUNT_ID="42cee80ca1465fe0bd27e3756b385f20"
+cd "$HOME" || exit 1
 
 NS_KIMLIK="583fd6cb034c460b9eb7436273a79459"   # uy-portal-kimlik (talep: kuyrugu)
 NS_DEDUPE="aecc61e1db964443bac642c31797a56d"   # whatsapp-dedupe (hata:gonderim)
