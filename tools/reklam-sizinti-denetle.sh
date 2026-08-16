@@ -34,6 +34,18 @@
 #
 #  MUAF LİSTESİ aşağıdadır. Bir bulgu meşruysa oraya GEREKÇESİYLE yazılır —
 #  desen gevşetilmez. Muaf listesi bu dosyanın hafızasıdır.
+#
+#  ── KURAL: YORUM SATIRI DA YAYINDIR (16.08.2026'da kendi hatamızla öğrenildi)
+#  js/portal.js'ten yasak bir ifade kaldırıldı ve ne kaldırıldığını açıklamak
+#  için ifade, kaldırma gerekçesinin İÇİNE tırnak içinde yazıldı. Sonuç: ifade
+#  yayından hiç çıkmadı — yalnız kod satırından yorum satırına taşındı.
+#  JS/CSS yorumları paketlenmeden yayına çıkar; TBB Takip Merkezi (Yön. m.12/A)
+#  dosyayı ham hâliyle okur ve bilirkişi kod ile yorumu ayırmak zorunda değildir.
+#
+#  BU YÜZDEN: kaldırılan yasak metin, kaldırma gerekçesinde ÖRNEK OLARAK DAHİ
+#  TEKRAR EDİLMEZ. Gerekçe niteleyerek yazılır ("sonucu olumlu niteleyen bir
+#  ifade taşıyordu"), metnin tam hâli yayına çıkmayan ORTAK-HAFIZA'ya konur.
+#  Bu betiğin desenleri yorum/kod ayrımı YAPMAZ — bu bilinçli bir tercihtir.
 # ============================================================================
 set -uo pipefail
 cd "$(dirname "$0")/.."

@@ -18,22 +18,27 @@ const {
   Dialog,
   Toast
 } = window.LexaHukukDesignSystem_93e85e;
-// ── SAHTE DOSYA VERİSİ KALDIRILDI · 16.08.2026 ───────────────────────────────
-//  Burada CASES ve TIMELINE adında iki örnek dizi vardı ("Örnek Dosya",
-//  status:'hearing' → "Duruşma bekleniyor" rozeti, progress:62 → %62 çubuğu,
-//  unread:2, ve zaman çizelgesinde "Rapor lehimize; itiraz süresi 2 hafta").
-//
-//  ÜÇ AYRI SEBEPLE KALDIRILDI:
-//   1) Yön. m.7/c — "Rapor lehimize" lehte sonuç imasıdır; bu dosya kamuya
-//      açık bir JS varlığıdır (curl ile okunur), yayımlanmış sayılır.
-//   2) Yön. m.7/d — dava aşaması/rozeti kapalı listede yoktur.
+// ── TEMSİLÎ DOSYA VERİSİ KALDIRILDI · 16.08.2026 ─────────────────────────────
+//  Burada iki temsilî dizi vardı; biri dosya kartlarını, biri zaman
+//  çizelgesini dolduruyordu. Üç sebeple kaldırıldı:
+//   1) Yön. m.7/c — çizelge kayıtlarından biri sonucu olumlu niteleyen bir
+//      ifade taşıyordu. Bu dosya kamuya açık bir JS varlığıdır (curl ile
+//      okunur), dolayısıyla yayımlanmış sayılır.
+//   2) Yön. m.7/d — dava aşaması rozeti, ilerleme yüzdesi ve okunmamış
+//      sayacı kapalı listede yoktur.
 //   3) Av.K. m.34 — dosyası henüz işlenmemiş GERÇEK müvekkil, kendi
-//      ekranında bu uydurma kartı görüyordu. Müvekkile işinin durumu
+//      ekranında bu temsilî kartı görüyordu. Müvekkile işinin durumu
 //      hakkında yanlış izlenim vermek, bilgi vermemekten ağırdır.
 //
-//  Yerine: veri yoksa dizi BOŞ kalır ve aşağıdaki dürüst boş durum çıkar.
-//  Bir daha örnek/temsilî dosya verisi EKLENMEYECEK — maket gerekiyorsa
-//  yayına çıkmayan ayrı bir dosyada tutulur.
+//  NOT — bu yorum bilerek ifadesizdir: kaldırılan metin buraya ÖRNEK OLARAK
+//  DAHİ yazılmaz. Yorum satırı da yayına çıkar; yasak ifadeyi açıklamak için
+//  tekrar etmek, ifadeyi yayında bırakmakla aynı yüzeyi doğurur.
+//  Ayrıntılı gerekçe ve kaldırılan metnin tam hâli, yayına çıkmayan
+//  ORTAK-HAFIZA/topics/reklam-yasagi.md dosyasındadır.
+//
+//  Veri yoksa diziler BOŞ kalır ve aşağıdaki dürüst boş durum gösterilir.
+//  Bir daha temsilî dosya verisi EKLENMEYECEK — maket gerekiyorsa yayın
+//  beyaz listesi dışında ayrı bir dosyada tutulur.
 // ─────────────────────────────────────────────────────────────────────────────
 const CASES = [];
 const TIMELINE = [];
