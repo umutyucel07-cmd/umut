@@ -49,9 +49,9 @@
   --scrim-overlay:rgba(11,22,38,.42); --blur-glass:saturate(140%) blur(10px);
   --ease-standard:cubic-bezier(.2,.6,.25,1); --ease-exit:cubic-bezier(.4,0,.7,.2); --ease-enter:cubic-bezier(0,.5,.2,1);
   --dur-instant:80ms; --dur-fast:140ms; --dur-base:220ms; --dur-slow:340ms; --dur-sheet:420ms; --press-scale:.985;
-  --font-display:"Times New Roman",Georgia,"Times",serif;
-  --font-sans:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
-  --font-mono:Menlo,ui-monospace,Consolas,monospace;
+  --font-display:"New York","Times New Roman",Georgia,serif;
+  --font-sans:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,sans-serif;
+  --font-mono:"SF Mono",Menlo,ui-monospace,Consolas,monospace;
 }
 *,*::before,*::after{box-sizing:border-box}
 body{margin:0;background:var(--surface-page);color:var(--text-body);font-family:var(--font-sans);font-size:var(--text-body);line-height:var(--leading-normal);-webkit-font-smoothing:antialiased}
