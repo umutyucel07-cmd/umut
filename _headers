@@ -35,6 +35,16 @@
 /vendor/*
   Cache-Control: public, max-age=31536000, immutable
 
+# ── 20.08.2026: sürümsüz dosyalar (deploy'da değişir) kısa önbellek ──
+# styles.css + js/* sürüm numarası taşımaz ve her yayında güncellenir.
+# Kısa süre + must-revalidate: kullanıcı en geç 5 dk içinde yeni sürümü görür.
+/styles.css
+  Cache-Control: public, max-age=300, must-revalidate
+/js/*
+  Cache-Control: public, max-age=300, must-revalidate
+/tokens/*
+  Cache-Control: public, max-age=300, must-revalidate
+
 # İç belgeler yanlışlıkla erişilebilir kalırsa hiç değilse dizine girmesin.
 # Asıl koruma _redirects içindeki 404 kurallarıdır; bu ikinci katman.
 /*.md
