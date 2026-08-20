@@ -15,34 +15,52 @@
  *    · sohbete düşmez, panele yapıştırılmaz
  *  KV'ye yalnız biberli ÖZET gider; kodun kendisi KV'ye de yazılmaz.
  *
- *  ── NEDEN KADEMELİ: GÜVEN SEVİYESİ ───────────────────────────────────────
- *  16.08.2026 ölçümü — bot-muvekkil-rehberi.json, 130 numara:
- *      yuksek = 12   (UYAP ile doğrulanmış)
- *      orta   = 50
- *      dusuk  = 68
- *  Yani numaraların YARIDAN FAZLASINDA numaranın kime ait olduğu kesin
- *  değildir. Erişim kodu, portaldaki dosya bilgilerinin anahtarıdır. Kodu
- *  doğrulanmamış bir numaraya göndermek, Avukatlık Kanunu m.36 anlamında
- *  sırrın yanlış kişiye tesliminden başka bir şey değildir. Bu yüzden:
+ *  ── NEDEN KADEMELİ ───────────────────────────────────────────────────────
+ *  ÖNEMLİ DÜZELTME (16.08.2026, akşam). Bu aracın ilk sürümü kademeyi
+ *  "numaranın kime ait olduğu belirsiz" gerekçesine dayandırıyordu. O gerekçe
+ *  YANLIŞTI ve ölçümle çürütüldü. Yanlış hâliyle yazılmış olması, bir alanı
+ *  okumadan anlamını varsaymanın sonucudur; kayda geçirilmiştir.
  *
- *      A kademesi (yuksek) : gönderi yazısında KOD VARDIR.
- *      B kademesi (orta)   : kod YOKTUR; müvekkil kodu siteden talep eder.
- *      C kademesi (dusuk)  : VARSAYILAN OLARAK GÖNDERİLMEZ.
+ *  bot-muvekkil-rehberi.json'un kendi açıklaması ne diyor:
+ *    "guven='yuksek' UYAP ile doğrulanmış demektir; 'dusuk' olanlarda bot
+ *     kimlik varsayımı YAPMAMALI, önce doğrulama sormalı."
  *
- *  C kademesini açmak için --dusuk-dahil bayrağı gerekir; bayrak bilinçli
- *  bir karardır, kolaylık değildir. Açılsa bile o kademede kod gönderilmez.
+ *  Bu bir GELEN mesaj kuralıdır: o numaradan biri yazdığında bot "bu kişi
+ *  filancadır" diye varsaymasın. Büronun KENDİ kaydındaki numaranın doğru
+ *  olup olmadığına dair bir yargı DEĞİLDİR. İki ayrı yön, iki ayrı güven.
+ *
+ *  16.08 ölçümü — 130 numara:
+ *      yuksek = 12   UYAP ile doğrulanmış · belge ort. 2,8
+ *      orta   = 50   UYAP'a bakılmamış    · belge ort. 5,6  ← en kalın dosyalar
+ *      dusuk  = 68   UYAP'a bakılmamış    · belge ort. 1,7
+ *      bir numaraya birden fazla ad bağlı olan: 2 (128'i tek adlı)
+ *
+ *  Yani "dusuk" = numara şüpheli DEĞİL; dosyası ince ve UYAP'la çapraz
+ *  bakılmamış demek. Belirsiz olan yalnız 2 numaradır.
+ *
+ *  Kod ile duyuruyu ayırmak yine de doğrudur, ama gerekçesi şudur:
+ *  /api/kod-talebi'nde kodu MÜVEKKİL ister — ad ve telefonunu yazarak zayıf
+ *  da olsa bir kimlik kanıtı verir. İTİLEN kodda böyle bir kanıt yoktur.
+ *  Bu yüzden kod, numarası İKİNCİ BİR KAYNAKTAN (UYAP) teyitli olanlara konur.
+ *  Duyurunun kendisinde kimlik bilgisi yoktur; onu esirgemek koruma değil,
+ *  müvekkili büronun kendi hizmetinden habersiz bırakmaktır.
+ *
+ *      A (yuksek)      : gönderi yazısında KOD VARDIR.
+ *      B (orta+dusuk)  : kod YOKTUR; müvekkil kodu siteden talep eder.
+ *      ELENEN          : bir numaraya birden fazla ad bağlıysa PAKETLENMEZ —
+ *                        ada hitap eden yazı yanlış kişiye gidebilir.
  *
  *  ── KULLANIM ─────────────────────────────────────────────────────────────
  *    node tools/muvekkil-duyuru.js --kuru                  # hiçbir şey yazmaz
- *    node tools/muvekkil-duyuru.js --kademe A              # yalnız doğrulanmış
- *    node tools/muvekkil-duyuru.js --kademe AB --adet 20   # ilk 20 paket
- *    node tools/muvekkil-duyuru.js --kademe AB --dusuk-dahil
+ *    node tools/muvekkil-duyuru.js                         # tüm paketler (AB)
+ *    node tools/muvekkil-duyuru.js --adet 20               # ilk 20 paket
+ *    node tools/muvekkil-duyuru.js --yalniz-teyitli        # yalnız UYAP teyitli
  *
  *  Bayraklar
- *    --kuru          hiçbir dosya yazılmaz, KV'ye dokunulmaz, yalnız sayar
- *    --kademe A|AB   varsayılan A
- *    --adet N        en çok N paket üret (kademeli gönderim için)
- *    --dusuk-dahil   düşük güvenli numaralar da paketlensin (kod YİNE yok)
+ *    --kuru            hiçbir dosya yazılmaz, KV'ye dokunulmaz, yalnız sayar
+ *    --kademe A|AB     varsayılan AB
+ *    --adet N          en çok N paket üret (kademeli gönderim için)
+ *    --yalniz-teyitli  yalnız A kademesi (UYAP teyitli) paketlensin
  *    --kv <id>       KV namespace (varsayılan: uy-portal-kimlik)
  *
  *  wrangler kurulu ve `wrangler login` yapılmış olmalıdır.
@@ -76,8 +94,8 @@ const arg = (ad, v = null) => {
     ? process.argv[i + 1] : v;
 };
 const KURU = process.argv.includes('--kuru');
-const DUSUK_DAHIL = process.argv.includes('--dusuk-dahil');
-const KADEME = String(arg('--kademe', 'A')).toUpperCase();
+const YALNIZ_TEYITLI = process.argv.includes('--yalniz-teyitli');
+const KADEME = String(arg('--kademe', 'AB')).toUpperCase();
 const ADET = Number(arg('--adet', '0')) || 0;
 const KV = arg('--kv', KV_VARSAYILAN);
 
@@ -166,24 +184,29 @@ if (!Array.isArray(kayitlar)) dur('muvekkil-portal.json kökü bir DİZİ olmal�
 
 /* Güven haritası: telefonun son 10 hanesi → guven. Ad OKUNMAZ. */
 const guvenHarita = new Map();
+const belirsizTel = new Map();
 if (fs.existsSync(KAYNAK_REHBER)) {
   const r = JSON.parse(fs.readFileSync(KAYNAK_REHBER, 'utf8'));
-  for (const s of (r.rehber || [])) guvenHarita.set(telNormalize(s.tel), s.guven || 'dusuk');
+  for (const s of (r.rehber || [])) {
+    guvenHarita.set(telNormalize(s.tel), s.guven || 'dusuk');
+    belirsizTel.set(telNormalize(s.tel), Array.isArray(s.adlar) ? s.adlar.length : 1);
+  }
 }
 
 /* ── kademelendirme ──────────────────────────────────────────────────────── */
-const KADEMESI = (g) => (g === 'yuksek' ? 'A' : g === 'orta' ? 'B' : 'C');
-const sayac = { A: 0, B: 0, C: 0, telsiz: 0 };
+const KADEMESI = (g) => (g === 'yuksek' ? 'A' : 'B');
+const sayac = { A: 0, B: 0, telsiz: 0, belirsiz: 0 };
 const secilen = [];
 
 for (const k of kayitlar) {
   const tel = telNormalize(k.tel);
   if (tel.length !== 10) { sayac.telsiz++; continue; }
+  // Bir numaraya birden fazla ad bağlıysa o numara PAKETLENMEZ: yazı müvekkile
+  // adıyla hitap ediyor ve yanlış kişiye ulaşırsa tek başına ifşa olur.
+  if ((belirsizTel.get(tel) || 1) > 1) { sayac.belirsiz++; continue; }
   const kad = KADEMESI(guvenHarita.get(tel));
   sayac[kad]++;
-  const uygun = kad === 'A'
-    || (kad === 'B' && KADEME === 'AB')
-    || (kad === 'C' && KADEME === 'AB' && DUSUK_DAHIL);
+  const uygun = kad === 'A' || (kad === 'B' && KADEME === 'AB' && !YALNIZ_TEYITLI);
   if (uygun) secilen.push({ ...k, tel, kademe: kad });
 }
 
@@ -193,10 +216,10 @@ console.log('müvekkil duyuru paketleri' + (KURU ? '  (KURU — hiçbir şey yaz
 console.log('──────────────────────────────────────────────────────────────');
 console.log(`  kaynak kayıt      : ${kayitlar.length}`);
 console.log(`  telefonu yok      : ${sayac.telsiz}`);
-console.log(`  A · doğrulanmış   : ${sayac.A}   → gönderi yazısında KOD VAR`);
-console.log(`  B · orta güven    : ${sayac.B}   → kod yok, siteden talep`);
-console.log(`  C · düşük güven   : ${sayac.C}   → ${DUSUK_DAHIL ? 'dahil (kod yok)' : 'GÖNDERİLMEZ'}`);
-console.log(`  seçilen kademe    : ${KADEME}${DUSUK_DAHIL ? ' + düşük' : ''}`);
+console.log(`  A · UYAP teyitli  : ${sayac.A}   → gönderi yazısında KOD VAR`);
+console.log(`  B · teyitsiz      : ${sayac.B}   → kod yok, siteden talep`);
+console.log(`  elenen (ad belirsiz): ${sayac.belirsiz}   → paketlenmez`);
+console.log(`  seçilen kademe    : ${KADEME}${YALNIZ_TEYITLI ? ' (yalnız teyitli)' : ''}`);
 console.log(`  üretilecek paket  : ${liste.length}${ADET ? `  (--adet ${ADET})` : ''}`);
 
 if (!liste.length) { console.log('\n  Üretilecek paket yok.\n'); process.exit(0); }
