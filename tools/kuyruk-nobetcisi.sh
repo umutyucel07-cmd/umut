@@ -58,12 +58,38 @@ OSA
 }
 
 # ── 1 · talep: kuyrugu ──────────────────────────────────────────────────────
-ANAHTARLAR=$(npx --yes wrangler@latest kv key list \
-  --namespace-id "$NS_KIMLIK" --prefix "talep:" --remote 2>/dev/null \
-  | grep '"name"' | sed 's/.*"name": *"\([^"]*\)".*/\1/')
+# BOS KUYRUK ile ULASILAMAYAN KV AYNI SEY DEGILDIR.
+#
+# 16-20.08 arasi bu ayrim yoktu: ikisi de bos ANAHTARLAR uretiyordu ve betik
+# HER TURDA "liste bos dondu (ag/wrangler?)" yaziyordu. Dort gunde ~380 kez.
+# Olculdu 20.08: talep: onekli anahtar sayisi 0 — yani kuyruk BOSTU, KV
+# saglikliydi. Uyari bastan sona sahtedi.
+#
+# Asil zarar sahte alarm degil: GERCEK bir kesintide de betik AYNI satiri
+# yazacakti. Her turda oten bir uyari uyari degildir; tasidigi bilgi sifirdir.
+# Nobetcinin tek isi hatanin sessiz kalmamasiydi; nobetcinin kendisi dort gun
+# sessizce korduu.
+#
+# Ayrim CIKIS KODU ve GOVDE BICIMI ile yapilir:
+#   cikis != 0        -> gercek hata
+#   govde bos         -> gercek hata (wrangler hep bir sey basar)
+#   govde "[" ile baslamiyor -> JSON degil, gercek hata
+#   govde "[]"        -> SAGLIKLI, kuyruk bos
+HAM=$(npx --yes wrangler@latest kv key list \
+  --namespace-id "$NS_KIMLIK" --prefix "talep:" --remote 2>/dev/null)
+CIKIS=$?
 
-if [ -z "$ANAHTARLAR" ] && ! grep -q "ILKKURULUM" "$GORULEN" 2>/dev/null; then
-  kayit "UYARI: liste bos dondu (ag/wrangler?) — alarm uretilmedi"
+GECERLI=0
+case "$HAM" in
+  \[*) GECERLI=1 ;;
+esac
+
+if [ $CIKIS -ne 0 ] || [ $GECERLI -eq 0 ]; then
+  kayit "HATA: KV listesi alinamadi (cikis=$CIKIS) — KUYRUK DENETLENEMEDI"
+  bildir "KV'ye ulasilamadi — kuyruk DENETLENEMEDI (cikis=$CIKIS)"
+  ANAHTARLAR=""
+else
+  ANAHTARLAR=$(print -r -- "$HAM" | grep '"name"' | sed 's/.*"name": *"\([^"]*\)".*/\1/')
 fi
 
 YENI_SAYI=0
