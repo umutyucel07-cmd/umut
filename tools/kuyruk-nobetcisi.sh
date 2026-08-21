@@ -104,12 +104,20 @@ print -r -- "$ANAHTARLAR" | while IFS= read -r K; do
       AD=$(print -r -- "$DEGER" | sed -n 's/.*"ad":"\([^"]*\)".*/\1/p')
       SON4=$(print -r -- "$DEGER" | sed -n 's/.*"telSon4":"\([^"]*\)".*/\1/p')
       kayit "YENI KUYRUK KAYDI: $K → $AD (...$SON4)"
-      # 21.08: onceki metin "arayip elden iletin" diyordu — bu YANLISTI.
-      # kod-talebi.js tasarimi geregi basarisiz denemede uretilen kod
-      # HICBIR YERDE saklanmiyor (yalniz basarili gonderimde KV'ye hash
-      # olarak yaziliyor). Elde iletecek somut bir kod yok; asagidaki metin
-      # artik bunu dogru soyluyor ve gercekci bir eylem oneriyor.
-      bildir "Yeni kod talebi kuyrukta: $AD (...$SON4). WhatsApp gonderimi basarisiz oldu — uretilen kod HICBIR YERDE sakli degil, elde iletecek kod yok. Muvekkili arayip durumu aciklayin (daha once aldigi bir kod varsa hala gecerlidir); engel kalkinca siteden kendisi yeniden dener."
+      # 21.08 ek: portalde kalıcı bir TEST kaydı var (wa-uctan-uca-dene.sh'nin
+      # sınadığı "UMUT NUH ÇELİK" / ...3203). O betik çalıştırıldığında Meta
+      # engeliyse bu kayıt da GERÇEK bir müvekkil talebiymiş gibi kuyruğa
+      # düşer; test kaydı için avukatı aramaya yönlendirmek yanlış alarmdır.
+      if [ "$AD" = "UMUT NUH ÇELİK" ] && [ "$SON4" = "3203" ]; then
+        kayit "TEST KAYDI (wa-uctan-uca-dene.sh) — bildirim BASTIRILDI: $K"
+      else
+        # 21.08: onceki metin "arayip elden iletin" diyordu — bu YANLISTI.
+        # kod-talebi.js tasarimi geregi basarisiz denemede uretilen kod
+        # HICBIR YERDE saklanmiyor (yalniz basarili gonderimde KV'ye hash
+        # olarak yaziliyor). Elde iletecek somut bir kod yok; asagidaki metin
+        # artik bunu dogru soyluyor ve gercekci bir eylem oneriyor.
+        bildir "Yeni kod talebi kuyrukta: $AD (...$SON4). WhatsApp gonderimi basarisiz oldu — uretilen kod HICBIR YERDE sakli degil, elde iletecek kod yok. Muvekkili arayip durumu aciklayin (daha once aldigi bir kod varsa hala gecerlidir); engel kalkinca siteden kendisi yeniden dener."
+      fi
     fi
   fi
 done
