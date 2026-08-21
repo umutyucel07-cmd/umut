@@ -105,10 +105,12 @@ print -r -- "$ANAHTARLAR" | while IFS= read -r K; do
       SON4=$(print -r -- "$DEGER" | sed -n 's/.*"telSon4":"\([^"]*\)".*/\1/p')
       kayit "YENI KUYRUK KAYDI: $K → $AD (...$SON4)"
       # 21.08 ek: portalde kalıcı bir TEST kaydı var (wa-uctan-uca-dene.sh'nin
-      # sınadığı "UMUT NUH ÇELİK" / ...3203). O betik çalıştırıldığında Meta
+      # sınadığı "Umut Nuh Çelik" / ...3203). O betik çalıştırıldığında Meta
       # engeliyse bu kayıt da GERÇEK bir müvekkil talebiymiş gibi kuyruğa
       # düşer; test kaydı için avukatı aramaya yönlendirmek yanlış alarmdır.
-      if [ "$AD" = "UMUT NUH ÇELİK" ] && [ "$SON4" = "3203" ]; then
+      # NOT: KV'deki "ad" alanı Title Case ("Umut Nuh Çelik") — büyük/küçük
+      # harften bağımsız karşılaştırılır (${(L)} zsh küçük harfe çevirir).
+      if [ "${(L)AD}" = "umut nuh çelik" ] && [ "$SON4" = "3203" ]; then
         kayit "TEST KAYDI (wa-uctan-uca-dene.sh) — bildirim BASTIRILDI: $K"
       else
         # 21.08: onceki metin "arayip elden iletin" diyordu — bu YANLISTI.
