@@ -92,8 +92,9 @@ echo "  mesaj: ${MESAJ:-?}"
 echo
 
 # Kodun yanıtta DÖNMEMESİ tasarım gereğidir — kod yalnız WhatsApp ile gider.
-if printf '%s' "$GOVDE" | grep -q 'UY-'; then
-  echo "  🔴 CİDDİ: yanıtın içinde kod görünüyor. Kod yalnız WhatsApp ile"
+  # Kodun yanıtta DÖNMEMESİ tasarım gereğidir — kod yalnız WhatsApp ile gider.
+  # Kod ön ekini kontrol et (MY- yeni / UY- eski, her iki de kod içerme ihlalidir).
+  if printf '%s' "$GOVDE" | grep -qE '^(UY|MY)-' || printf '%s' "$GOVDE" | grep -qE '[0-9A-Z]{4}-[0-9A-Z]{4}'; then
   echo "     gitmelidir; HTTP yanıtında dönmesi bilgi sızıntısıdır."
 fi
 

@@ -44,7 +44,7 @@ async function calistir() {
   kontrol('KV yokken kod talebi SÖZ VERMEZ', c.durum === 'hazir-degil', JSON.stringify(c));
   kontrol('KV yokken "alınmıştır" denmez', !/alınmıştır|iletilecek/i.test(c.mesaj || ''), JSON.stringify(c));
 
-  r = await giris({ request: istek({ kod: 'UY-ABCD-EFGH' }), env: {} });
+  r = await giris({ request: istek({ kod: 'MY-ABCD-EFGH' }), env: {} });
   c = await r.json();
   kontrol('KV yokken giriş "hazır değil" der, "kod yanlış" DEMEZ', c.durum === 'hazir-degil', JSON.stringify(c));
 
@@ -59,7 +59,7 @@ async function calistir() {
   // Dizin boşken GİRİŞ de "kod yanlış" dememeli. 13.08 akşamı canlıda ölçüldü:
   // KOD_KV bağlı ama boşken doğru biçimli bir kod "kayıtlarımızla
   // eşleşmemektedir" yanıtı alıyordu — 12.08'de düzeltilen yalanın başka dalı.
-  r = await giris({ request: istek({ kod: 'UY-ABCD-EFGH' }), env });
+  r = await giris({ request: istek({ kod: 'MY-ABCD-EFGH' }), env });
   c = await r.json();
   kontrol('dizin boşken giriş "hazır değil" der, "kod yanlış" DEMEZ', c.durum === 'hazir-degil', JSON.stringify(c));
   kontrol('dizin boşken giriş 503 döner (401 değil)', r.status === 503, `status=${r.status}`);
@@ -76,9 +76,9 @@ async function calistir() {
   r = await kodTalebi({ request: istek({ ad: 'ayşe   yılmaz', tel: '+90 532 000 00 00' }), env });
   c = await r.json();
   kontrol('eşleşen müvekkile kod gönderilir', c.durum === 'gonderildi', JSON.stringify(c));
-  kontrol('yanıt gövdesinde kod GEÇMEZ', !JSON.stringify(c).match(/UY-[0-9A-Z]{4}-[0-9A-Z]{4}/), JSON.stringify(c));
+    kontrol('yanıt gövdesinde kod GEÇMEZ', !JSON.stringify(c).match(/MY-[0-9A-Z]{4}-[0-9A-Z]{4}/), JSON.stringify(c));
   const mesaj = gonderilenler[0]?.text?.body || '';
-  const kod1 = (mesaj.match(/UY-[0-9A-Z]{4}-[0-9A-Z]{4}/) || [])[0];
+  const kod1 = (mesaj.match(/MY-[0-9A-Z]{4}-[0-9A-Z]{4}/) || [])[0];
   kontrol('WhatsApp mesajında kod var', !!kod1, mesaj);
   kontrol('hedef numara 90 önekli', gonderilenler[0]?.to === '905320000000', gonderilenler[0]?.to);
 
@@ -98,7 +98,7 @@ async function calistir() {
     Object.keys(c.buro || {}).join(','));
 
   // ---- 6. Yanlış kod: 401 ----------------------------------------------
-  r = await giris({ request: istek({ kod: 'UY-2222-3333' }), env });
+    r = await giris({ request: istek({ kod: 'MY-2222-3333' }), env });
   c = await r.json();
   kontrol('yanlış kod reddedilir', r.status === 401 && c.durum === 'yok', `${r.status} ${JSON.stringify(c)}`);
   kontrol('yanlış kodda büro alanları DÖNMEZ', !c.buro && !JSON.stringify(c).match(/iban|tcNo/i), JSON.stringify(c));
@@ -113,7 +113,7 @@ async function calistir() {
   gonderilenler = [];
   r = await kodTalebi({ request: istek({ ad: 'Ayşe Yılmaz', tel: '05320000000' }), env });
   c = await r.json();
-  const kod2 = ((gonderilenler[0]?.text?.body || '').match(/UY-[0-9A-Z]{4}-[0-9A-Z]{4}/) || [])[0];
+    const kod2 = ((gonderilenler[0]?.text?.body || '').match(/MY-[0-9A-Z]{4}-[0-9A-Z]{4}/) || [])[0];
   kontrol('ikinci talepte YENİ kod üretilir', !!kod2 && kod2 !== kod1, `${kod1} → ${kod2}`);
 
   r = await giris({ request: istek({ kod: kod2 }), env });
@@ -158,10 +158,11 @@ async function calistir() {
   }
   kontrol('kod talebi freni devreye girer', sonDurum === 'sik', sonDurum);
 
-  // ---- 12. Normalizasyon ----------------------------------------------
-  kontrol('eski biçim kod normalize olur', kodNormalize('uy 4182') === 'UY-4182', kodNormalize('uy 4182'));
-  kontrol('yeni biçim kod normalize olur', kodNormalize('uy-abcd-efgh') === 'UY-ABCD-EFGH', kodNormalize('uy-abcd-efgh'));
-  kontrol('karışık harf reddedilir (I/O/0/1 alfabede yok)', kodNormalize('UY-IOOO-1111') === '');
+    // ---- 12. Normalizasyon (MY ana, UY geriye uyumlu) ----------------------
+  kontrol('eski UY biçim kod normalize olur (geriye uyumlu)', kodNormalize('uy 4182') === 'UY-4182', kodNormalize('uy 4182'));
+  kontrol('yeni MY biçim kod normalize olur', kodNormalize('my-abcd-efgh') === 'MY-ABCD-EFGH', kodNormalize('my-abcd-efgh'));
+  kontrol('eski UY uzun kodda önek korunur', kodNormalize('uy-abcd-efgh') === 'UY-ABCD-EFGH', kodNormalize('uy-abcd-efgh'));
+  kontrol('MY kodunda I/O/0/1 harfi reddedilir', kodNormalize('MY-IOOO-1111') === '');
   kontrol('Türkçe "i" büyük harfi doğru', adNormalize('inci şahin') === 'İNCİ ŞAHİN', adNormalize('inci şahin'));
 
   console.log(`\n  geçti: ${gecti}   kaldı: ${kaldi}`);
