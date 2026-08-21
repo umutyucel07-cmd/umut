@@ -13,6 +13,46 @@ UYGULANMAMALI.
 Bu belge yalniz tarihsel referans icin tutuluyor. Canli sistem icin:
 `~/.agents/skills/umut-yucel-sistem/SKILL.md` ve `functions/api/kod-talebi.js`.
 
+## 📌 21.08.2026 — canlı denetim + onarı (canlı sistemde kalır)
+
+> `PORTAL-KURULUM.md` 12–13.08 tasarımını anlatıyor; **tasarım hâlâ canlıdır.**
+> Canlı yol: `functions/api/kod-talebi.js` → `giris.js` → `lib/kimlik.js`.
+
+### Denetim sonuçları (499 müvekkil — `06_Muvekkil-Portfoyu/_Veri/muvekkiller.json`)
+
+| Ölçüm | Değer | Not |
+|---|---|---|
+| `erisim_kodu` toplamı | 499 | hepsi `MY-`, 0 `UY-`, 0 boş |
+| `kodNormalize` kabul | 499 / 499 | tümü `MY-XXXX-XXXX` biçiminde geçer |
+| Telefonu geçerli (10 hane) | 139 | 360 teleportusuz |
+| KV'de `kod:`→`mv:` haritası | ~12 | **487 kodun KV haritası yok → giris "eşleşmedi/503"** |
+| KV'de `mv:` dizini | 133 | `muvekkil-yukle.js` ile telli 139'dan (5 tel çakışması) |
+
+### Kısa tespit
+- **MY- kabul (13.08 öncesi hata):** `kimlik.js`/`kodNormalize` `MY`-yi kabul ediyor; 499/499 kod geçti. İlk kritik düzeltme yapıldı.
+- **KV haritası eksik (21.08):** dağıtılmış 499 kod var ama `kod:<özet>` haritası yalnız 12 → `/api/giris` 487'yi reddediyor.
+- **Meta/WA engeli:** `kod-talebi` kodu SHA-256'larak üretir (düz kod asla yok) ama Meta `API access blocked` (error 200) kesiyor → **gönderemiyor**. 360 teleportusuzu etkilemez (kodu *elden teslim* almış).
+- **360 teleportusuz:** `kod:→mv:` zincirinin `mv:` ucu (ad+tel) kurulamaz → onarı aracı onları **atlar**. Giriş için telefon toplayıp `muvekkil-yukle.js` ile `mv:` eklemek gerekir.
+
+### Onarı — `tools/muvekkil-kod-aktif.js`
+Var olan `MY-` kodları KV'ye `kod:` haritası olarak toplar; kodu WA/Meta'dan **bağımsız** girişe çevirir. Düz kod asla KV/stdout/dosyaya geçmez — yalnızca `kod:<sha256(biber|kod|kod)>` → `{"mv":"mv:<sha256(biber|mv|ad|tel)>"}`.
+
+```bash
+python3 07_Buro-Duzeni/_Araclar/muvekkil_portal_hazirla.py
+node   tools/muvekkil-yukle.js --dosya 07_Buro-Duzeni/_Veri/muvekkil-portal.json --kv <NS>
+node   tools/muvekkil-kod-aktif.js --kuru          # say + ön izle (yazmaz)
+node   tools/muvekkil-kod-aktif.js --dry           # KV okur, eksik mv:/kod: raporu
+node   tools/muvekkil-kod-aktif.js --apply --kv <NS>   # yazar (yalnız 139; 360 atlanır)
+```
+- `--apply` yalnızca `--apply` bayrağıyla çalışır; `--kuru/--dry` asla yazmaz.
+- `kod:` girdileri `kod-talebi` ile aynı `expirationTTL: 180*86400`; `mv:` girdileri `kod-talebi` post-send şemasını takip eder (`kodAnahtar` dahil) → Meta engeli kalktığında müvekkil "Kodumu gönder" iletiştirdiğinde **eski seed kod `mv.kodAnahtar`→delete** otomatik geçersiz olur.
+- Yardımı çalıştırmadan `mv:` kurulu olmalı; `--dry` eksik `mv:` kayıtlarını uyarır.
+
+### 360 teleportusuz için açık
+Sadece kod seed'lemek yetmez (mv: yok). (1) Telefon toplayıp `muvekkil-yukle.js`+`kod-aktif`; (2) ya da `kod:`→`{ad, soyad, dosyalar}` (kod tek başına kimliği taşır) tasarımı — fakat bu `kod-talebi`'nin `ad|tel` eşleşmesini kırar, ayrı görev.
+
+---
+
 ---
 
 # Müvekkil Portalı — Kurulum ve GitHub Copilot Görev Belgesi

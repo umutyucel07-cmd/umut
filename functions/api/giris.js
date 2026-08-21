@@ -38,7 +38,7 @@ export async function onRequest({ request, env }) {
     return json({
       ok: false,
       durum: 'bicim',
-      mesaj: 'Kodunuz UY-XXXX-XXXX biçimindedir. Lütfen tarafımızca iletilen kodu olduğu gibi giriniz.',
+      mesaj: 'Kodunuz MY-XXXX-XXXX biçimindedir. Lütfen tarafımızca iletilen kodu olduğu gibi giriniz.',
     }, 400);
   }
 

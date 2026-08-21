@@ -34,7 +34,7 @@ g="$(curl -s -m 15 -X POST -H 'content-type: application/json' -d '{}' "$SITE/ap
 echo "$g" | grep -q '"durum":"bicim"' && iyi "kodsuz/biçimsiz istek reddediliyor (veri sızmıyor)" || npd "giriş beklenm/edik yanıt: $g"
 
 # Dizin-yokken-yalan onarımı canlı mı? (doğru biçimli koda 'hazir-degil' beklenir; 'yok' YANLIŞ olurdu)
-gd="$(curl -s -m 15 -X POST -H 'content-type: application/json' -d '{"kod":"UY-2345-6789"}' "$SITE/api/giris?$(cb)")"
+gd="$(curl -s -m 15 -X POST -H 'content-type: application/json' -d '{"kod":"MY-2345-6789"}' "$SITE/api/giris?$(cb)")"
 case "$gd" in
   *'"durum":"hazir-degil"'*) iyi "giriş: dizin yokken 'hazırlanıyor' diyor (yalan yok)";;
   *'"durum":"acik"'*)        iyi "giriş: geçerli bir kayıt açıldı (dizin yüklü)";;

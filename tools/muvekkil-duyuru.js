@@ -85,7 +85,9 @@ const KOD_OMRU_GUN = 180;                       // functions/api/kod-talebi.js i
 
 /* lib/kimlik.js ile AYNI alfabe. Ayrışırsa üretilen kod girişte tanınmaz. */
 const ALFABE = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
-const KOD_ONEK = 'UY';
+// Ana önek MY (21.08.2026): 499 müvekkilin tüm mevcut kodları MY-XXXX-XXXX.
+// Eski UY- kodlar kimlik.js'de geriye dönük olarak kabul edilir; yeni üretim MY-.
+const KOD_ONEK = 'MY';
 
 /* ── argümanlar ──────────────────────────────────────────────────────────── */
 const arg = (ad, v = null) => {
