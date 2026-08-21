@@ -1,7 +1,7 @@
 #!/bin/zsh
 # ============================================================================
 #  kuyruk-nobetcisi.sh — kod-talebi kuyrugunun SESSIZLIGINI kirar
-#  Av. Umut Yucel · 16.08.2026
+#  Av. Umut Yucel · 16.08.2026 (21.08: bildirim metni duzeltildi, asagida)
 #
 #  ── NEDEN VAR ─────────────────────────────────────────────────────────────
 #  WhatsApp gonderimi coktugunde /api/kod-talebi talebi SESSIZCE KV kuyruguna
@@ -104,7 +104,12 @@ print -r -- "$ANAHTARLAR" | while IFS= read -r K; do
       AD=$(print -r -- "$DEGER" | sed -n 's/.*"ad":"\([^"]*\)".*/\1/p')
       SON4=$(print -r -- "$DEGER" | sed -n 's/.*"telSon4":"\([^"]*\)".*/\1/p')
       kayit "YENI KUYRUK KAYDI: $K → $AD (...$SON4)"
-      bildir "Yeni kod talebi kuyrukta: $AD (...$SON4). Kod ULASMADI — arayip elden iletin."
+      # 21.08: onceki metin "arayip elden iletin" diyordu — bu YANLISTI.
+      # kod-talebi.js tasarimi geregi basarisiz denemede uretilen kod
+      # HICBIR YERDE saklanmiyor (yalniz basarili gonderimde KV'ye hash
+      # olarak yaziliyor). Elde iletecek somut bir kod yok; asagidaki metin
+      # artik bunu dogru soyluyor ve gercekci bir eylem oneriyor.
+      bildir "Yeni kod talebi kuyrukta: $AD (...$SON4). WhatsApp gonderimi basarisiz oldu — uretilen kod HICBIR YERDE sakli degil, elde iletecek kod yok. Muvekkili arayip durumu aciklayin (daha once aldigi bir kod varsa hala gecerlidir); engel kalkinca siteden kendisi yeniden dener."
     fi
   fi
 done
