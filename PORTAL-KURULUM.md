@@ -1,3 +1,20 @@
+> ⚠️ BU BELGE ESKIMISTIR — UYGULAMAYIN (21.08.2026 notu, Claude denetimi)
+
+Bu belgedeki tasarim (kodlarin ELDEN dagitimi, worker-v6-portal-modulu.js,
+`/portal/dogrula` ucu) HIC YAYINA ALINMADI. 13.08.2026'da tamamen farkli bir
+tasarimla (`functions/api/kod-talebi.js` — otomatik, rotasyonlu, WhatsApp'tan
+kod gonderimi) FIILEN degistirildi; canli sistem BUDUR.
+
+Asagidaki "Adim 3" bolumundeki **"kod-talebi.js kullanilmaz/silinir"** cumlesi
+ARTIK YANLIS ve TEHLIKELIDIR: kod-talebi.js bugun calisan TEK canli erisim
+kodu sistemidir, uygulanirsa musteri erisimini koparir. SILINMEMELI,
+UYGULANMAMALI.
+
+Bu belge yalniz tarihsel referans icin tutuluyor. Canli sistem icin:
+`~/.agents/skills/umut-yucel-sistem/SKILL.md` ve `functions/api/kod-talebi.js`.
+
+---
+
 # Müvekkil Portalı — Kurulum ve GitHub Copilot Görev Belgesi
 
 **12.08.2026** · Av. Umut Yücel · Depo: `~/Documents/GitHub/umut` + Cloudflare Worker `muddy-hat-f441`
